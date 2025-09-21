@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式教案 | 1-4 相似三角形的應用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMMZMGDqlrmqiKRfenibuzV1PveAAi1xubgAMlQHBVICfgNxw" crossorigin="anonymous">
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzOK91vil/MfLF/r5TCmiRabC/CCLLyQPA-" crossorigin="anonymous"></script>
+    <!-- KaTeX auto-render extension -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURPlLfgvEodFrYVwqTxdMVJnWO6gQrGSxgVIx0s24NNhLvYGHd5iR6" crossorigin="anonymous"></script>
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; font-size: 18px; }
+        .tab-btn { transition: all 0.2s ease-in-out; }
+        .tab-btn.active { border-color: #f97316; background-color: #fff7ed; color: #f97316; font-weight: 600; }
+        .group-tab-btn { padding: 0.5rem 1rem; border-bottom: 2px solid transparent; font-size: 1rem; font-weight: 500; color: #475569; cursor: pointer; transition: all 0.2s ease-in-out; }
+        .group-tab-btn:hover { border-color: #e2e8f0; color: #1e293b; }
+        .group-tab-btn.active { border-color: #fb923c; color: #c2410c; font-weight: 700; }
+        .quiz-item { border-bottom: 1px dashed #cbd5e1; padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
+        .quiz-container .quiz-item:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+        .quiz-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.75rem; }
+        .option-btn { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.375rem; text-align: left; background-color: #fff; transition: all 0.2s ease-in-out; font-size: 1rem; }
+        .option-btn:hover:not(:disabled) { border-color: #f97316; background-color: #fff7ed; }
+        .option-btn:disabled { cursor: not-allowed; }
+        .option-btn.correct { background-color: #dcfce7; border-color: #22c55e; color: #15803d; font-weight: bold; }
+        .option-btn.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #b91c1c; }
+        .katex { font-size: 1.1em; }
+        .draggable { cursor: grab; }
+        .drop-zone { border: 2px dashed #9ca3af; }
+        .drop-zone.over { background-color: #fef3c7; }
+        canvas.drawing-canvas { touch-action: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-20">
+        <div class="container mx-auto px-4 py-3 text-center">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">互動式學習小幫手</h1>
+            <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-orange-600 mt-1">1-4 相似三角形的應用</h2>
+            <p class="text-sm text-slate-500 mt-2">設計者:lkoj / v1.0 / 20250920</p>
+            <div class="flex justify-center mt-2">
+                <!--計數器的圖像已被設定的鏈接站點。不要執行代碼的任何修改。-->
+                <nobr><table border="0" cellspacing="0" cellpadding="0"><tbody><tr><td><a href="https://www.stylemap.co.jp/counter/taiwan/"><img src="https://www.f-counter.net/ani1/66/1758355245/" alt="網站計數器" border="0" style="margin:0px; padding:0px; border:0px; vertical-align:bottom"></a></td>
+                <td><a href="https://www.stylemap.co.jp/counter/taiwan/"><img src="https://www.f-counter.net/ani2/66/1758355245/" alt="網站計數器" border="0" style="margin:0px; padding:0px; border:0px; vertical-align:bottom"></a></td></tr></tbody></table></nobr>
+            </div>
+             <div class="container mx-auto px-4 pt-3 border-t mt-3">
+                <div id="chapter-title-display" class="text-slate-700 font-semibold text-center h-6 flex items-center justify-center"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-2 sm:px-4 py-8">
+        <div class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+            <div class="border-b border-slate-200 mb-6">
+                <nav class="-mb-px flex flex-wrap" aria-label="Tabs">
+                    <button class="tab-btn active flex-1 sm:flex-initial text-center border-b-2 font-medium text-base py-3 px-2 sm:px-4" data-tab="lesson1" data-title="動手玩影子！簡易測量">第一節課</button>
+                    <button class="tab-btn flex-1 sm:flex-initial text-center text-slate-500 hover:text-slate-700 hover:border-slate-300 border-b-2 font-medium text-base py-3 px-2 sm:px-4" data-tab="lesson2" data-title="放大縮小的秘密 (面積與周長關係)">第二節課</button>
+                    <button class="tab-btn flex-1 sm:flex-initial text-center text-slate-500 hover:text-slate-700 hover:border-slate-300 border-b-2 font-medium text-base py-3 px-2 sm:px-4" data-tab="lesson3" data-title="神奇的三角板 (特殊直角三角形)">第三節課</button>
+                    <button class="tab-btn flex-1 sm:flex-initial text-center text-slate-500 hover:text-slate-700 hover:border-slate-300 border-b-2 font-medium text-base py-3 px-2 sm:px-4" data-tab="lesson4" data-title="坡道上的符號">第四節課</button>
+                    <button class="tab-btn flex-1 sm:flex-initial text-center text-slate-500 hover:text-slate-700 hover:border-slate-300 border-b-2 font-medium text-base py-3 px-2 sm:px-4" data-tab="lesson5" data-title="我是測量小達人 (綜合應用與總複習)">第五節課</button>
+                </nav>
+            </div>
+
+            <div id="tab-content-container">
+                <!-- Lesson 1 Content -->
+                <div id="lesson1" class="tab-content space-y-8">
+                    <section>
+                        <h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">學習目標</h3>
+                        <ul class="list-disc list-inside bg-orange-50 p-4 rounded-lg border border-orange-200 text-slate-700 space-y-1">
+                            <li>理解「太陽光視為平行光」的假設，並知道此假設是影子測量的基礎。</li>
+                            <li>能辨識生活情境中的相似三角形（如：物體與影子、標竿與河岸）。</li>
+                            <li>能正確列出對應邊的比例式，並解出未知的高度或寬度。</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">引起動機 (P.63)</h3>
+                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200 space-y-6">
+                            <div>
+                                <h4 class="font-semibold text-orange-800 text-lg">👆 具體操作 (互動網頁)：泰勒斯測量模擬器</h4>
+                                <p class="text-base text-slate-700 my-2">拖曳下方的太陽，改變影子長度。觀察當木棍的影子長度等於木棍高度時，金字塔的高度和影子有什麼關係？</p>
+                                <div class="bg-white p-4 rounded-lg shadow-inner">
+                                    <div id="thales-sim" class="relative h-64 w-full overflow-hidden bg-sky-200 rounded">
+                                        <!-- Ground -->
+                                        <div class="absolute bottom-0 left-0 w-full h-1/4 bg-yellow-200"></div>
+                                        <!-- Pyramid -->
+                                        <div class="absolute bottom-[25%] left-1/4 w-0 h-0" style="border-left: 50px solid transparent; border-right: 50px solid transparent; border-bottom: 80px solid #fBBF24;"></div>
+                                        <div id="pyramid-shadow" class="absolute bottom-[25%] left-1/4 w-0 h-0 transition-all duration-100 ease-linear" style="border-left: 50px solid transparent; border-right: 50px solid transparent; border-bottom: 80px solid rgba(0,0,0,0.3); transform-origin: 50px 80px;"></div>
+                                        <!-- Stick -->
+                                        <div class="absolute bottom-[25%] right-1/4 h-16 w-2 bg-amber-700"></div>
+                                        <div id="stick-shadow" class="absolute bottom-[25%] right-1/4 h-16 w-2 bg-black opacity-30 transition-all duration-100 ease-linear" style="transform-origin: bottom center;"></div>
+                                        <!-- Sun -->
+                                        <div id="sun" class="absolute top-4 left-1/2 w-12 h-12 bg-yellow-400 rounded-full cursor-grab active:cursor-grabbing shadow-lg select-none flex items-center justify-center text-2xl">☀️</div>
+                                    </div>
+                                    <div class="mt-4 grid grid-cols-2 gap-4 text-center">
+                                        <div><strong>金字塔</strong><p id="pyramid-info">高: 80m, 影長: 80.0m</p></div>
+                                        <div><strong>木棍</strong><p id="stick-info">高: 16m, 影長: 16.0m</p></div>
+                                    </div>
+                                    <div id="thales-conclusion" class="mt-2 text-center text-lg font-bold text-green-600 h-7"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-orange-800 text-lg">📊 圖表說明 & 🗣️ 口訣化 (P.64)</h4>
+                                <div class="bg-amber-100 p-4 rounded-md border-amber-300 text-amber-900 text-center">
+                                    <p class="font-bold text-lg">「太陽光，平行照，兩個三角相似了！」</p>
+                                    <p class="font-semibold text-lg">「對應邊，成比例，高度輕鬆算出來！」</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">備課用書範例 (P.64 例1)</h3>
+                        <div id="l1-example" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div>
+                    </section>
+                    <section>
+                        <h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">教學活動 (P.64-65)</h3>
+                        <div class="activity-container">
+                            <div class="border-b border-slate-200 mb-4">
+                                <nav class="-mb-px flex flex-wrap"><button class="group-tab-btn active" data-group="l1-base">📘 基礎</button><button class="group-tab-btn" data-group="l1-advanced">📗 進階</button><button class="group-tab-btn" data-group="l1-expert">📙 專業</button></nav>
+                            </div>
+                            <div id="l1-base" class="group-tab-content quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div>
+                            <div id="l1-advanced" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div>
+                            <div id="l1-expert" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div>
+                        </div>
+                    </section>
+                     <section>
+                        <h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">例題自我挑戰 (P.65, 78)</h3>
+                        <div id="l1-challenge" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div>
+                    </section>
+                </div>
+                <div id="lesson2" class="tab-content hidden space-y-8">
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">學習目標</h3><ul class="list-disc list-inside bg-orange-50 p-4 rounded-lg border border-orange-200 text-slate-700 space-y-1"><li>理解相似三角形的「對應高之比」等於「對應邊之比」。</li><li>理解相似三角形的「周長比」等於「對應邊之比」。</li><li>理解並能應用相似三角形的「面積比」等於「對應邊長的平方比」。</li></ul></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">引起動機 (P.66)</h3><div class="bg-orange-50 p-4 rounded-lg border border-orange-200 space-y-6"><div><h4 class="font-semibold text-orange-800 text-lg">👆 具體操作 (互動網頁)：放大縮小的秘密</h4><p class="text-base text-slate-700 my-2">拖曳滑桿，將三角形放大縮小。觀察邊長、周長和面積的比例變化有什麼不同？</p><div class="bg-white p-4 rounded-lg shadow-inner"><div class="flex justify-center items-center h-48"><svg id="scaling-svg" width="200" height="150" viewBox="0 0 200 150"><polygon points="10,140 130,140 50,20" style="fill: #60a5fa; stroke: #2563eb; stroke-width:2"></polygon></svg></div><input id="scale-slider" type="range" min="0.5" max="2" value="1" step="0.1" class="w-full mt-4"><div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-2 text-center text-lg"><div>邊長比: <span id="side-ratio" class="font-bold text-orange-600">1.0 : 1</span></div><div>周長比: <span id="perimeter-ratio" class="font-bold text-orange-600">1.0 : 1</span></div><div>面積比: <span id="area-ratio" class="font-bold text-red-600">1.0 : 1</span></div></div></div></div><div><h4 class="font-semibold text-orange-800 text-lg">📊 圖表說明 & 🗣️ 口訣化 (P.67, 69)</h4><div class="bg-amber-100 p-4 rounded-md border-amber-300 text-amber-900 text-center"><p class="font-bold text-lg">「邊長、高、周長，一樣比！」</p><p class="font-semibold text-lg">「一碰到面積，就要玩平方！」</p></div></div></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">備課用書範例 (P.68 例4)</h3><div id="l2-example" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">教學活動 (P.66-80)</h3><div class="activity-container"><div class="border-b border-slate-200 mb-4"><nav class="-mb-px flex flex-wrap"><button class="group-tab-btn active" data-group="l2-base">📘 基礎</button><button class="group-tab-btn" data-group="l2-advanced">📗 進階</button><button class="group-tab-btn" data-group="l2-expert">📙 專業</button></nav></div><div id="l2-base" class="group-tab-content quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div><div id="l2-advanced" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div><div id="l2-expert" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">例題自我挑戰 (P.69, 78-79)</h3><div id="l2-challenge" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></section>
+                </div>
+                <div id="lesson3" class="tab-content hidden space-y-8">
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">學習目標</h3><ul class="list-disc list-inside bg-orange-50 p-4 rounded-lg border border-orange-200 text-slate-700 space-y-1"><li>熟記 \(45^\circ-45^\circ-90^\circ\) 和 \(30^\circ-60^\circ-90^\circ\) 兩種特殊直角三角形的邊長比。</li><li>能根據圖形中的角度，判斷其屬於哪一種特殊直角三角形。</li><li>能利用邊長比，在給定一邊長的情況下，求出另兩邊長。</li></ul></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">引起動機 (P.74)</h3><div class="bg-orange-50 p-4 rounded-lg border border-orange-200 space-y-6"><div><h4 class="font-semibold text-orange-800 text-lg">👆 具體操作 (互動網頁)：三角板拼圖</h4><p class="text-base text-slate-700 my-2">將下方的邊長比例數字，拖曳到三角板對應的邊上吧！</p>
+<div class="bg-white p-4 rounded-lg shadow-inner">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center py-8 md:py-4">
+        <!-- Triangle 1: 45-45-90 -->
+        <div class="relative w-40 h-40 mx-auto">
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+                <polygon points="5,95 95,95 5,5" fill="#fef08a" stroke="#ca8a04" stroke-width="2"></polygon>
+                <text x="10" y="25" font-size="10">45°</text>
+                <text x="75" y="90" font-size="10">45°</text>
+            </svg>
+            <!-- Drop Zones -->
+            <div class="drop-zone absolute w-12 h-10 flex items-center justify-center" data-triangle="1" data-side="a" data-answer="1" style="top: 50%; left: -25px; transform: translateY(-50%);"></div>
+            <div class="drop-zone absolute w-12 h-10 flex items-center justify-center" data-triangle="1" data-side="b" data-answer="1" style="bottom: -25px; left: 50%; transform: translateX(-50%);"></div>
+            <div class="drop-zone absolute w-12 h-10 flex items-center justify-center" data-triangle="1" data-side="c" data-answer="√2" style="top: 25%; right: -5px; transform: rotate(-45deg);"></div>
+        </div>
+
+        <!-- Triangle 2: 30-60-90 -->
+        <div class="relative w-40 h-44 mx-auto">
+             <svg viewBox="0 0 100 115" class="w-full h-full">
+                <polygon points="5,110 95,110 5,5" fill="#fef08a" stroke="#ca8a04" stroke-width="2"></polygon>
+                <text x="10" y="25" font-size="10">30°</text>
+                <text x="75" y="105" font-size="10">60°</text>
+            </svg>
+            <!-- Drop Zones -->
+            <div class="drop-zone absolute w-12 h-10 flex items-center justify-center" data-triangle="2" data-side="b" data-answer="√3" style="top: 50%; left: -25px; transform: translateY(-50%);"></div>
+            <div class="drop-zone absolute w-12 h-10 flex items-center justify-center" data-triangle="2" data-side="a" data-answer="1" style="bottom: -25px; left: 50%; transform: translateX(-50%);"></div>
+            <div class="drop-zone absolute w-12 h-10 flex items-center justify-center" data-triangle="2" data-side="c" data-answer="2" style="top: 30%; right: -15px; transform: rotate(-50deg);"></div>
+        </div>
+    </div>
+    <div id="draggable-container" class="mt-4 flex flex-wrap justify-center gap-2"></div><div id="puzzle-feedback" class="text-center mt-2 h-6 font-bold"></div>
+</div>
+</div><div><h4 class="font-semibold text-orange-800 text-lg">📊 圖表說明 & 🗣️ 口訣化 (P.74)</h4><div class="bg-amber-100 p-4 rounded-md border-amber-300 text-amber-900 text-center"><p class="font-bold text-lg">「45度，最公平，兩邊都是1，斜邊根號2！」</p><p class="font-semibold text-lg">「30對1，60對根3，90對2最大邊！」</p></div></div></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">備課用書範例 (P.75 例7)</h3><div id="l3-example" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">教學活動 (P.74-76, 80)</h3><div class="activity-container"><div class="border-b border-slate-200 mb-4"><nav class="-mb-px flex flex-wrap"><button class="group-tab-btn active" data-group="l3-base">📘 基礎</button><button class="group-tab-btn" data-group="l3-advanced">📗 進階</button><button class="group-tab-btn" data-group="l3-expert">📙 專業</button></nav></div><div id="l3-base" class="group-tab-content quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div><div id="l3-advanced" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div><div id="l3-expert" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">例題自我挑戰 (P.76, 79-80)</h3><div id="l3-challenge" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></section>
+                </div>
+                <div id="lesson4" class="tab-content hidden space-y-8">
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">學習目標</h3><ul class="list-disc list-inside bg-orange-50 p-4 rounded-lg border border-orange-200 text-slate-700 space-y-1"><li>理解 sin, cos, tan 是代表直角三角形中特定「兩邊的比值」的符號。</li><li>能根據指定銳角，正確辨識其「對邊」、「鄰邊」與「斜邊」。</li><li>能根據給定的三邊長，計算出 sin, cos, tan 的值。</li></ul></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">引起動機 (P.70)</h3><div class="bg-orange-50 p-4 rounded-lg border border-orange-200 space-y-6"><div><h4 class="font-semibold text-orange-800 text-lg">👆 具體操作 (互動網頁)：無障礙坡道設計師</h4><p class="text-base text-slate-700 my-2">依規定，坡度(高/水平長)不得大於 1/12 (約0.083)。拖曳坡道底端調整水平長度，看看怎樣的設計才合格？</p><div class="bg-white p-4 rounded-lg shadow-inner"><div class="relative h-48 w-full bg-gray-100 flex items-end"><div id="ramp-container" class="relative w-full h-full"><div class="absolute right-0 bottom-0 bg-gray-300 w-12" style="height: 20%;"></div><svg id="ramp-svg" class="absolute left-0 bottom-0 w-full h-full" viewBox="0 0 100 20" preserveAspectRatio="none"><polygon id="ramp-polygon" points="0,20 100,20 100,0" fill="#a5f3fc"></polygon></svg><div class="absolute right-0 bottom-0 text-sm p-1">高: 20</div></div></div><input id="ramp-slider" type="range" min="100" max="400" value="240" step="1" class="w-full mt-4"><div class="mt-4 text-center text-lg">水平長度: <span id="ramp-length" class="font-bold">240</span> | 坡度 (高/長): <span id="ramp-slope" class="font-bold">0.083</span> <span id="ramp-status" class="ml-2 font-bold p-1 rounded"></span></div></div></div><div><h4 class="font-semibold text-orange-800 text-lg">📊 圖表說明 & 🗣️ 口訣化 (P.71)</h4><div class="bg-amber-100 p-4 rounded-md border-amber-300 text-amber-900 text-center"><p class="font-bold text-lg">sin (s): 斜勾對, cos (c): 斜夾鄰, tan (t): 鄰分之對</p></div></div></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">備課用書範例 (P.72 例5)</h3><div id="l4-example" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">教學活動 (P.72-73, 79)</h3><div class="activity-container"><div class="border-b border-slate-200 mb-4"><nav class="-mb-px flex flex-wrap"><button class="group-tab-btn active" data-group="l4-base">📘 基礎</button><button class="group-tab-btn" data-group="l4-advanced">📗 進階</button><button class="group-tab-btn" data-group="l4-expert">📙 專業</button></nav></div><div id="l4-base" class="group-tab-content quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div><div id="l4-advanced" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div><div id="l4-expert" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">例題自我挑戰 (P.73, 79)</h3><div id="l4-challenge" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></section>
+                </div>
+                <div id="lesson5" class="tab-content hidden space-y-8">
+                     <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">學習目標</h3><ul class="list-disc list-inside bg-orange-50 p-4 rounded-lg border border-orange-200 text-slate-700 space-y-1"><li>統整本單元所有概念（簡易測量、面積比、特殊角、三角比）。</li><li>能分析題目情境，判斷並選擇最合適的方法解題。</li><li>能完成較複雜的綜合應用題。</li></ul></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">引起動機</h3><div class="bg-orange-50 p-4 rounded-lg border border-orange-200 space-y-6"><div><h4 class="font-semibold text-orange-800 text-lg">👆 具體操作 (互動網頁)：測量工具箱</h4><p class="text-base text-slate-700 my-2">情境：想知道學校旗杆的高度。請點擊下方的工具，看看可以用什麼方法來測量？</p><div class="bg-white p-4 rounded-lg shadow-inner"><div class="flex justify-center items-center space-x-4"><div id="toolbox-ruler" class="toolbox-item p-2 border rounded cursor-pointer hover:bg-gray-100 text-center">📏<br>捲尺</div><div id="toolbox-protractor" class="toolbox-item p-2 border rounded cursor-pointer hover:bg-gray-100 text-center">📐<br>量角器</div><div id="toolbox-special" class="toolbox-item p-2 border rounded cursor-pointer hover:bg-gray-100 text-center">特殊<br>三角板</div></div><div id="toolbox-feedback" class="mt-4 p-3 bg-gray-50 rounded h-24 text-center">請選擇一個工具</div></div></div><div><h4 class="font-semibold text-orange-800 text-lg">📊 圖表說明 & 🗣️ 口訣化</h4><div class="bg-amber-100 p-4 rounded-md border-amber-300 text-amber-900 text-center"><p class="font-bold text-lg">「看題目，找條件，畫出圖形是關鍵！」</p><p class="font-semibold text-lg">「有影子用比例；有面積要平方；特殊角最快解；普通角按手機！」</p></div></div></div></section>
+                     <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">備課用書範例 (P.80 挑錯題)</h3><div id="l5-example" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></section>
+                    <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">教學活動 (P.78, 80-81)</h3><div class="activity-container"><div class="border-b border-slate-200 mb-4"><nav class="-mb-px flex flex-wrap"><button class="group-tab-btn active" data-group="l5-base">📘 基礎</button><button class="group-tab-btn" data-group="l5-advanced">📗 進階</button><button class="group-tab-btn" data-group="l5-expert">📙 專業</button></nav></div><div id="l5-base" class="group-tab-content quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div><div id="l5-advanced" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div><div id="l5-expert" class="group-tab-content hidden quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></div></section>
+                     <section><h3 class="text-2xl font-bold text-orange-600 border-l-4 border-orange-500 pl-3 mb-4">例題自我挑戰 (P.79-81)</h3><div id="l5-challenge" class="quiz-container bg-slate-50 p-4 sm:p-6 rounded-lg border"></div></section>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="text-center py-4 bg-slate-800 text-white mt-8">
+        <p>康軒三上數學</p>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Defer rendering KaTeX until it's loaded
+    const renderKatex = () => {
+        if (window.renderMathInElement) {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+        }
+    };
+    
+    const lessonData = {
+        'l1': {
+            'example': [
+                { q: "小妍身高160公分(1.6公尺)，影長200公分(2公尺)，同時旁邊一棵樹的影長是5公尺，樹高多少？", o: ["3.2 公尺", "4 公尺", "6.25 公尺"], a: "B", svg: '<svg viewBox="0 0 150 70" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="60" x2="140" y2="60" stroke="black"/><path d="M 30 60 V 30" stroke="blue" stroke-width="2"/><text x="20" y="25" font-size="5">1.6m</text><path d="M 110 60 V 10" stroke="green" stroke-width="4"/><text x="115" y="35" font-size="5">x</text><line x1="30" y1="30" x2="10" y2="60" stroke="orange" stroke-dasharray="2"/><line x1="110" y1="10" x2="50" y2="60" stroke="orange" stroke-dasharray="2"/><text x="15" y="68" font-size="5">2m</text><text x="75" y="68" font-size="5">5m</text></svg>', ex: "因為是同一個時間，所以身高和影長的比例會相同。<br>小妍身高:樹高 = 小妍影長:樹影長<br>\\(1.6 : x = 2 : 5\\)<br>\\(2x = 1.6 \\times 5 = 8\\)<br>\\(x = 4\\) 公尺。" }
+            ],
+            'base': [
+                { q: "(P.64 隨堂練習) 小翊身高1.7公尺，影長0.85公尺，建築物影長15公尺，求建築物高度。", o: ["30 公尺", "15 公尺", "7.5 公尺"], a: "A", svg: '<svg viewBox="0 0 150 70" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="60" x2="140" y2="60" stroke="black"/><path d="M 30 60 V 25" stroke="blue" stroke-width="2"/><text x="20" y="20" font-size="5">1.7m</text><path d="M 120 60 V 5" stroke="gray" stroke-width="6"/><text x="125" y="35" font-size="5">x</text><line x1="30" y1="25" x2="10" y2="60" stroke="orange" stroke-dasharray="2"/><line x1="120" y1="5" x2="45" y2="60" stroke="orange" stroke-dasharray="2"/><text x="12" y="68" font-size="5">0.85m</text><text x="75" y="68" font-size="5">15m</text></svg>', ex: "身高與影長的比例固定。<br>\\(1.7 : 0.85 = x : 15\\)<br>\\(2 = x : 15 \\implies x = 30\\) 公尺。" },
+                { q: "(P.64 重新布題) 小柏身高1.5公尺，影長1.8公尺，旗杆影長3公尺，求旗杆長度。", o: ["2.5 公尺", "2 公尺", "3.6 公尺"], a: "A", svg: '<svg viewBox="0 0 150 70" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="60" x2="140" y2="60" stroke="black"/><path d="M 40 60 V 30" stroke="blue" stroke-width="2"/><text x="30" y="25" font-size="5">1.5m</text><path d="M 110 60 V 10" stroke="brown" stroke-width="2"/><path d="M 110 10 L 115 12 L 110 14 Z" fill="red"/><text x="115" y="35" font-size="5">x</text><line x1="40" y1="30" x2="10" y2="60" stroke="orange" stroke-dasharray="2"/><line x1="110" y1="10" x2="50" y2="60" stroke="orange" stroke-dasharray="2"/><text x="18" y="68" font-size="5">1.8m</text><text x="75" y="68" font-size="5">3m</text></svg>', ex: "\\(1.5 : 1.8 = x : 3 \\implies 1.8x = 4.5 \\implies x = 2.5\\) 公尺。" },
+                { q: "情境簡化題：若我的身高是你的2倍，在同一時間，我的影子會是你的幾倍？", o: ["1倍", "2倍", "4倍"], a: "B", ex: "因為身高和影長成正比，所以身高變2倍，影長也變2倍。" }
+            ],
+            'advanced': [
+                { q: "(P.64 重新布題) 在B點立一根1.6m的人，燈在A點，\\(\\overline{AB}=2\\)m, \\(\\overline{BC}=3\\)m，求牆上人影\\(\\overline{CD}\\)的高度。", o: ["2.4m", "3.2m", "4m"], a: "C", svg:'<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="70" x2="110" y2="70" stroke="black"/><circle cx="15" cy="70" r="3" fill="yellow"/><text x="13" y="65" font-size="5">A (燈)</text><path d="M 45 70 V 50" stroke="blue" stroke-width="2"/><text x="40" y="78" font-size="5">B</text><text x="47" y="55" font-size="5">1.6m</text><path d="M 90 70 V 30" stroke="purple" stroke-width="2"/><text x="85" y="78" font-size="5">C</text><text x="92" y="45" font-size="5">D (影)</text><line x1="15" y1="70" x2="90" y2="30" stroke="orange" stroke-dasharray="2"/><text x="25" y="78" font-size="5">2m</text><text x="63" y="78" font-size="5">3m</text></svg>', ex: "設影長為x。由相似三角形(A為光源)，可得 \\(\\triangle A(人底B)(人頂) \\sim \\triangle A(牆底C)(影頂D)\\)。\\(\\implies \\overline{AC} : \\overline{AB} = \\overline{CD} : 人高 \\implies (2+3) : 2 = x : 1.6 \\implies 2x = 5 \\times 1.6 = 8 \\implies x=4\\) m。" },
+                { q: "(P.65 例2) 測量河寬。\\(\\overline{AC}=20\\)步, \\(\\overline{CD}=5\\)步, \\(\\overline{DE}=2\\)m，求河寬\\(\\overline{AB}\\)。", o: ["10m", "8m", "5m"], a: "B", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-sm mx-auto"><path d="M 0 50 H 120" stroke="#38bdf8" stroke-width="20" fill="#7dd3fc"/><path d="M 20 0 V 100" stroke="black"/><path d="M 80 0 V 100" stroke="black"/><text x="18" y="8" font-size="5">A</text><text x="18" y="95" font-size="5">B</text><text x="48" y="8" font-size="5">C</text><text x="63" y="8" font-size="5">D</text><text x="63" y="30" font-size="5">E</text><line x1="20" y1="90" x2="80" y2="10" stroke-dasharray="2" stroke="black"/><line x1="50" y1="10" x2="65" y2="10" stroke="black"/><line x1="65" y1="10" x2="65" y2="25" stroke="black"/><text x="25" y="8" font-size="5">20步</text><text x="52" y="8" font-size="5">5步</text><text x="67" y="20" font-size="5">2m</text></svg>', ex: "由相似三角形得 \\( \\overline{AB}:\\overline{DE} = \\overline{AC}:\\overline{CD} \\implies \\overline{AB}:2 = 20:5 \\implies 5 \\times \\overline{AB} = 40 \\implies \\overline{AB}=8\\) m。" },
+                { q: "(P.65 重新布題) 測量河寬 \\(\\overline{AB}\\)，已知 \\(\\overline{BC}=6\\)，\\(\\overline{CD}=4\\)，\\(\\overline{DE}=3\\)，求 \\(\\overline{AB}\\)。", o: ["4.5", "5", "6"], a: "A", svg: '<svg viewBox="0 0 100 80" class="w-full h-auto max-w-xs mx-auto"><path d="M0 40 H 100" stroke="#38bdf8" stroke-width="20" fill="#7dd3fc"/><path d="M 20 0 V 80" stroke="black"/><path d="M 60 0 V 80" stroke="black"/><text x="18" y="8" font-size="5">A</text><text x="18" y="75" font-size="5">B</text><text x="40" y="38" font-size="5">C</text><text x="62" y="8" font-size="5">E</text><text x="62" y="75" font-size="5">D</text><line x1="20" y1="10" x2="60" y2="70" stroke-dasharray="2" stroke="black"/><text x="35" y="15" font-size="5">\\(\\overline{BC}=6\\)</text><text x="64" y="55" font-size="5">\\(\\overline{CD}=4\\)</text><text x="64" y="25" font-size="5">\\(\\overline{DE}=3\\)</text></svg>', ex: "假設此為對頂角相似模型。 \\( \\triangle ABC \\sim \\triangle EDC \\)。<br>\\( \\overline{AB}:\\overline{ED} = \\overline{BC}:\\overline{DC} \\implies \\overline{AB}:3 = 6:4 \\implies 4\\overline{AB} = 18 \\implies \\overline{AB} = 4.5 \\)" }
+            ],
+            'expert': [
+                { q: "(P.64 重新布題) 在B點立一根1.6m的人，燈在A點，\\(\\overline{AB}=2\\)m, \\(\\overline{BC}=3\\)m，求牆上人影\\(\\overline{CD}\\)的高度。", o: ["2.4m", "3.2m", "4m"], a: "C", svg:'<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="70" x2="110" y2="70" stroke="black"/><circle cx="15" cy="70" r="3" fill="yellow"/><text x="13" y="65" font-size="5">A (燈)</text><path d="M 45 70 V 50" stroke="blue" stroke-width="2"/><text x="40" y="78" font-size="5">B</text><text x="47" y="55" font-size="5">1.6m</text><path d="M 90 70 V 30" stroke="purple" stroke-width="2"/><text x="85" y="78" font-size="5">C</text><text x="92" y="45" font-size="5">D (影)</text><line x1="15" y1="70" x2="90" y2="30" stroke="orange" stroke-dasharray="2"/><text x="25" y="78" font-size="5">2m</text><text x="63" y="78" font-size="5">3m</text></svg>', ex: "設影長為x。由相似三角形(A為光源)，可得 \\(\\triangle A(人底B)(人頂) \\sim \\triangle A(牆底C)(影頂D)\\)。\\(\\implies \\overline{AC} : \\overline{AB} = \\overline{CD} : 人高 \\implies (2+3) : 2 = x : 1.6 \\implies 2x = 5 \\times 1.6 = 8 \\implies x=4\\) m。" },
+                { q: "(P.65 隨堂練習) 已知 \\(\\overline{AB}=10\\)m, \\(\\overline{CD}=4\\)m, \\(\\overline{BD}=9\\)m，求河寬 \\(\\overline{DE}\\)。", o: ["5m", "6m", "7m"], a: "B", svg: '<svg viewBox="0 0 180 100" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="80" x2="170" y2="80" stroke="black"/><path d="M 110 75 V 85 H 170 V 75 Z" stroke="#38bdf8" fill="#7dd3fc"/><text x="130" y="92" font-size="5">河寬 DE=x</text><path d="M 20 80 V 10" stroke="black" stroke-width="2"/><text x="18" y="8" font-size="5">A</text><text x="18" y="85" font-size="5">B</text><text x="10" y="45" font-size="5">10m</text><path d="M 110 80 V 52" stroke="black" stroke-width="2"/><text x="108" y="50" font-size="5">C</text><text x="108" y="85" font-size="5">D</text><text x="115" y="66" font-size="5">4m</text><text x="168" y="85" font-size="5">E</text><line x1="170" y1="80" x2="20" y2="10" stroke="orange" stroke-dasharray="2"/><text x="60" y="90" font-size="5">BD=9m</text></svg>', ex: "設 \\(\\overline{DE}=x\\), 則 \\(\\overline{BE}=9+x\\)。由 \\(\\triangle ABE \\sim \\triangle CDE\\) 得 \\(\\overline{AB}:\\overline{CD} = \\overline{BE}:\\overline{DE} \\implies 10:4 = (9+x):x \\implies 10x = 36+4x \\implies 6x=36 \\implies x=6\\) m。" },
+                { q: "小明想用鏡子測量樹高。他將鏡子放在地上，從鏡中看到樹梢時，已知他眼睛離地1.6公尺，他離鏡子2公尺，鏡子離樹根8公尺，求樹高。", o: ["6.4公尺", "8公尺", "10公尺"], a: "A", svg: '<svg viewBox="0 0 150 80" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="70" x2="140" y2="70" stroke="black"/><path d="M 120 70 V 10" stroke="green" stroke-width="4"/><text x="122" y="40" font-size="5">樹高 x</text><path d="M 30 70 V 46" stroke="blue" stroke-width="2"/><text x="18" y="45" font-size="5">眼高 1.6m</text><rect x="68" y="69" width="4" height="2" fill="cyan" stroke="blue"/><text x="65" y="65" font-size="5">鏡</text><line x1="30" y1="46" x2="70" y2="70" stroke="orange" stroke-dasharray="2"/><line x1="120" y1="10" x2="70" y2="70" stroke="orange" stroke-dasharray="2"/><text x="45" y="78" font-size="5">2m</text><text x="90" y="78" font-size="5">8m</text></svg>', ex: "根據光的反射定律，入射角等於反射角，可構成兩個相似直角三角形。設樹高為x。\\(x : 1.6 = 8 : 2 \\implies 2x = 12.8 \\implies x=6.4\\) 公尺。" }
+            ],
+            'challenge': [
+                { q: "一根電線杆高10公尺，影長12公尺，此時旁邊一棵樹的影長為6公尺，請問樹高多少公尺？", o: ["4公尺", "5公尺", "6公尺"], a: "B", svg: '<svg viewBox="0 0 160 80" class="w-full h-auto max-w-sm mx-auto"><line x1="0" y1="70" x2="160" y2="70" stroke="black"/><path d="M 30 70 V 20" stroke="gray" stroke-width="3"/><text x="18" y="45" font-size="5">10m</text><line x1="30" y1="70" x2="78" y2="70" stroke-width="2" stroke="rgba(0,0,0,0.5)"/><text x="45" y="78" font-size="5">12m</text><line x1="30" y1="20" x2="78" y2="70" stroke="orange" stroke-dasharray="2"/><path d="M 110 70 V 45" stroke="green" stroke-width="4"/><text x="115" y="55" font-size="5">x</text><line x1="110" y1="70" x2="134" y2="70" stroke-width="2" stroke="rgba(0,0,0,0.5)"/><text x="115" y="78" font-size="5">6m</text><line x1="110" y1="45" x2="134" y2="70" stroke="orange" stroke-dasharray="2"/></svg>', ex: "\\(10:12 = x:6 \\implies 12x = 60 \\implies x=5\\) 公尺。" },
+                { q: "(P.65 例2) 小翊順著河岸走，在C點對岸有一點B，沿岸走20步到A點，再走5步到D點，從D點作一直線DE垂直岸邊，使得B,C,E三點共線，若\\(\\overline{DE}=2\\)公尺，求河寬\\(\\overline{AB}\\)。", o: ["4公尺", "8公尺", "10公尺"], a: "B", svg: '<svg viewBox="0 0 150 100" class="w-full h-auto max-w-sm mx-auto"><path d="M 0 0 H 150 V 50 H 0 Z" fill="#7dd3fc"/><line x1="0" y1="50" x2="150" y2="50" stroke="black" /><text x="48" y="48" font-size="5">A</text><text x="88" y="48" font-size="5">C</text><text x="108" y="48" font-size="5">D</text><text x="48" y="8" font-size="5">B</text><text x="113" y="75" font-size="5">E</text><line x1="50" y1="10" x2="50" y2="50" stroke="red" stroke-width="1.5" /><text x="38" y="30" font-size="5">河寬 AB</text><line x1="110" y1="50" x2="110" y2="70" stroke="blue" stroke-width="1.5" /><text x="113" y="60" font-size="5">DE=2m</text><line x1="50" y1="10" x2="110" y2="70" stroke="orange" stroke-dasharray="2" /><text x="65" y="58" font-size="5">AC=20步</text><text x="95" y="58" font-size="5">CD=5步</text><path d="M 50 45 h 5 v 5" stroke="gray" fill="none" stroke-width="0.5" /><path d="M 110 55 h -5 v -5" stroke="gray" fill="none" stroke-width="0.5" /></svg>', ex: "由對頂角相似得 \\(\\triangle ABC \\sim \\triangle EDC\\)。\\(\\overline{AB}:\\overline{ED} = \\overline{AC}:\\overline{CD} \\implies \\overline{AB}:2 = 20:5 \\implies 5\\overline{AB} = 40 \\implies \\overline{AB}=8\\) 公尺。" },
+                { q: "想測量一面牆的高度，我在牆前5公尺處立一根2公尺長的竿子，並在竿子後方2公尺處觀察，視線剛好可以看到牆頂，求牆高。", o: ["5公尺", "6公尺", "7公尺"], a: "C", svg: '<svg viewBox="0 0 150 80" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="70" x2="140" y2="70" stroke="black"/><circle cx="20" cy="70" r="2" fill="blue" /><text x="10" y="65" font-size="5">觀察點</text><path d="M 130 70 V 10" stroke="gray" stroke-width="6"/><text x="132" y="40" font-size="5">牆高 x</text><path d="M 75 70 V 49" stroke="brown" stroke-width="2"/><text x="77" y="47" font-size="5">竿高 2m</text><line x1="20" y1="70" x2="130" y2="10" stroke="orange" stroke-dasharray="2"/><text x="40" y="78" font-size="5">2m</text><text x="95" y="78" font-size="5">5m</text></svg>', ex: "設牆高為x。由相似三角形得 \\(x:2 = (5+2):2 \\implies 2x=14 \\implies x=7\\) 公尺。" }
+            ]
+        },
+        'l2': {
+            'example': [
+                { q: "\\( \\triangle ABC \\sim \\triangle DEF \\)，對應高比為3:2，若\\(\\triangle ABC\\)面積為15，求\\(\\triangle DEF\\)面積。", o: ["\\( \\frac{20}{3} \\)", "10", "22.5"], a: "A", svg: '<svg viewBox="0 0 180 70" class="w-full h-auto max-w-md mx-auto"><polygon points="10,60 70,60 40,10" fill="#a7f3d0" stroke="green"/><line x1="40" y1="10" x2="40" y2="60" stroke="green" stroke-dasharray="2"/><text x="72" y="40" font-size="8">~</text><polygon points="90,60 170,60 130,10" fill="#bae6fd" stroke="blue"/><line x1="130" y1="10" x2="130" y2="60" stroke="blue" stroke-dasharray="2"/><text x="35" y="5" font-size="6">A=15</text><text x="125" y="5" font-size="6">A=?</text><text x="42" y="40" font-size="6">高=3k</text><text x="132" y="40" font-size="6">高=2k</text></svg>', ex: "高之比 = 邊長比 = 3:2。<br>面積比 = 邊長的平方比 = \\(3^2 : 2^2 = 9 : 4\\)。<br>設 \\(\\triangle DEF\\) 面積為 x，則 \\(15 : x = 9 : 4\\)。<br>\\(9x = 15 \\times 4 = 60\\)<br>\\(x = \\frac{60}{9} = \\frac{20}{3}\\)。" }
+            ],
+            'base': [
+                { q: "(P.66 隨堂練習) 兩相似三角形對應高比為3:2，\\(\\overline{BC}=12\\)，求對應邊\\(\\overline{EF}\\)。", o: ["18", "8", "12"], a: "B", svg: '<svg viewBox="0 0 160 70" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,60 70,60 40,10" fill="#a7f3d0" stroke="green"/><text x="35" y="68" font-size="5">BC=12</text><text x="75" y="40">~</text><polygon points="90,60 150,60 120,20" fill="#bae6fd" stroke="blue"/><text x="115" y="68" font-size="5">EF=?</text><text x="42" y="40" font-size="6">高=3k</text><text x="122" y="45" font-size="6">高=2k</text></svg>', ex: "對應邊的比 = 對應高的比。<br>\\(\\overline{BC}:\\overline{EF} = 3:2 \\implies 12:\\overline{EF} = 3:2 \\implies 3\\overline{EF} = 24 \\implies \\overline{EF}=8\\)。" },
+                { q: "兩個相似三角形的對應邊分別是5公分和10公分，它們的周長比和面積比是多少？", o: ["周長比\\(1:2\\), 面積比\\(1:4\\)", "周長比\\(1:2\\), 面積比\\(1:2\\)", "周長比\\(1:4\\), 面積比\\(1:16\\)"], a: "A", svg: '<svg viewBox="0 0 160 70" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,60 50,60 30,30" fill="#fef9c3" stroke="#ca8a04"/><text x="25" y="68" font-size="5">5</text><text x="75" y="45">~</text><polygon points="90,60 170,60 130, -10" fill="#fef9c3" stroke="#ca8a04"/><text x="125" y="68" font-size="5">10</text></svg>', ex: "邊長比 = 5:10 = 1:2。<br>周長比 = 邊長比 = 1:2。<br>面積比 = 邊長的平方比 = \\(1^2:2^2 = 1:4\\)。" },
+                { q: "(P.69 隨堂練習) D,E,F為三邊中點，\\(\\overline{DE}=3, \\overline{DF}=4, \\angle FDE=90^\\circ\\)，求大三角形ABC的周長與面積。", o: ["周長24, 面積24", "周長12, 面積6", "周長24, 面積12"], a: "A", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,90 110,90 60,10" fill="#f1f5f9" stroke="black"/><polygon points="85,50 60,90 35,50" fill="#fde68a" stroke="#f59e0b"/><text x="58" y="8" font-size="5">A</text><text x="5" y="95" font-size="5">B</text><text x="112" y="95" font-size="5">C</text><text x="58" y="95" font-size="5">D</text><text x="87" y="50" font-size="5">E</text><text x="33" y="50" font-size="5">F</text><text x="70" y="75" font-size="5">3</text><text x="45" y="75" font-size="5">4</text></svg>', ex: "小三角形周長 = 3+4+5=12。面積 = \\(\\frac{3 \\times 4}{2}=6\\)。<br>大三角形周長 = 2倍小周長 = 24。<br>大三角形面積 = 4倍小面積 = 24。" }
+            ],
+            'advanced': [
+                 { q: "(P.68 隨堂練習) 直角\\(\\triangle ABC\\)中，\\(\\angle A=90^\\circ, \\overline{AB}=8, \\overline{AC}=6\\)。從\\(\\overline{AB}\\)中點D作\\(\\overline{DE}\\perp\\overline{BC}\\)於E點，求\\(\\triangle BDE\\)與\\(\\triangle ABC\\)面積比。", o: ["\\(4:25\\)", "\\(2:5\\)", "\\(1:4\\)"], a: "A", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,10 10,90 70,10" fill="#dbeafe" stroke="blue"/><text x="5" y="8" font-size="5">A</text><text x="5" y="95" font-size="5">B</text><text x="72" y="8" font-size="5">C</text><circle cx="10" cy="50" r="1.5"/><text x="0" y="53" font-size="5">D</text><line x1="10" y1="50" x2="29.2" y2="64.4" stroke="blue" stroke-width="0.5"/><text x="31" y="68" font-size="5">E</text><path d="M 29.2 64.4 L 25.2 67.4 L 26.2 62.4" fill="none" stroke="blue" stroke-width="0.5" /></svg>', ex: "\\(\\triangle BDE \\sim \\triangle BCA\\) (AA相似)。對應邊為 \\(\\overline{BD}:\\overline{BC}\\)。\\(\\overline{BC}=\\sqrt{8^2+6^2}=10\\)。\\(\\overline{BD}=4\\) (因為D是中點)。邊長比=4:10=2:5。面積比=\\(2^2:5^2=4:25\\)。" },
+                 { q: "(P.69 Key point) 已知\\(\\triangle ABC\\)面積為48，D,E,F為三邊中點，求\\(\\triangle DEF\\)的面積。", o: ["24", "16", "12"], a: "C", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,90 110,90 60,10" fill="#f1f5f9" stroke="black"/><text x="50" y="50" font-size="6">A=48</text><polygon points="85,50 60,90 35,50" fill="#fde68a" stroke="#f59e0b"/><text x="55" y="70" font-size="6">A=?</text></svg>', ex: "中點連成的三角形面積是原來的 \\(\\frac{1}{4}\\)。<br>\\(\\frac{48}{4} = 12\\)。" },
+                 { q: "(P.78 自我評量3) 平行四邊形中，\\(\\overline{BC}=10, \\overline{DE}=6\\)，求\\(\\triangle ABE\\)與\\(\\triangle DFE\\)面積比。", o: ["\\(4:9\\)", "\\(2:3\\)", "\\(10:6\\)"], a: "A", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,70 90,70 110,20 30,20" fill="#fef9c3" stroke="black"/><line x1="10" y1="70" x2="110" y2="20" stroke="black"/><text x="28" y="18" font-size="5">A</text><text x="8" y="75" font-size="5">B</text><text x="92" y="75" font-size="5">C</text><text x="112" y="18" font-size="5">F</text><text x="70" y="18" font-size="5">D</text><circle cx="50" cy="20" r="1.5"/><text x="48" y="15" font-size="5">E</text></svg>', ex: "\\(\\overline{AD}=\\overline{BC}=10, \\overline{AE}=10-6=4\\)。\\(\\triangle ABE \\sim \\triangle FDE\\) (AA相似)。面積比 = 對應邊平方比 = \\(\\overline{AE}^2:\\overline{DE}^2 = 4^2:6^2 = 16:36 = 4:9\\)。" }
+            ],
+            'expert': [
+                { q: "(P.68 重新布題) 平行四邊形ABCD面積108，E, F為對角線AC三等分點，G, H為對角線BD三等分點，求平行四邊形EHFG面積。", o: ["12", "18", "36"], a: "A", svg: '<svg viewBox="0 0 140 100" class="w-full h-auto max-w-sm mx-auto"><polygon points="20,90 100,90 120,20 40,20" fill="#fef9c3" stroke="black"/><text x="38" y="18" font-size="5">A</text><text x="18" y="95" font-size="5">B</text><text x="102" y="95" font-size="5">C</text><text x="122" y="18" font-size="5">D</text><line x1="40" y1="20" x2="100" y2="90" stroke="black" stroke-dasharray="1"/><line x1="20" y1="90" x2="120" y2="20" stroke="black" stroke-dasharray="1"/><text x="59" y="42" font-size="5">E</text><text x="80" y="68" font-size="5">F</text><text x="52" y="68" font-size="5">G</text><text x="87" y="42" font-size="5">H</text><polygon points="60,43.3 86.6,43.4 80,66.6 53.3,66.7" fill="#fde68a" stroke="red"/></svg>', ex: "EHFG的對角線長是ABCD的\\(\\frac{1}{3}\\)。所以邊長比是\\(\\frac{1}{3}\\)，面積比是\\((\\frac{1}{3})^2 = \\frac{1}{9}\\)。\\(\\frac{108}{9} = 12\\)。" },
+                { q: "(P.79 自我評量4) 邊長12的正三角形層層取中點，求所有線段長的和。", o: ["54", "63", "72"], a: "B", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,87 90,87 50,13" stroke="black" fill="none"/><polygon points="70,50 50,87 30,50" stroke="black" fill="none"/><polygon points="40,68.5 60,68.5 50,50" stroke="black" fill="none"/></svg>', ex: "大三角形周長=36。中三角形周長=18。小三角形周長=9。總和 = 36+18+9 = 63。" },
+                { q: "已知\\(\\triangle ABC\\)面積14，依圖(P.80 歷屆試題)剪開，邊長分段為3,4，求平行四邊形面積。", o: ["\\(\\frac{48}{7}\\)", "\\(\\frac{42}{5}\\)", "6"], a: "A", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="50,10 10,90 90,90" fill="#e0f2fe" stroke="black"/><line x1="26" y1="42" x2="74" y2="42" stroke-dasharray="2" stroke="gray"/><line x1="18" y1="66" x2="82" y2="66" stroke-dasharray="2" stroke="gray"/><polygon points="26,42 18,66 54.3,66 45.7,42" fill="#fecaca" stroke="red"/></svg>', ex: "最上方小三角形(T1)與整個大三角形(T3)相似，邊長比3:7，面積比9:49。T1面積=\\(14 \\times \\frac{9}{49}=\\frac{18}{7}\\)。包含平行四邊形的中間三角形(T2)與T3相似，邊長比4:7，面積比16:49。T2面積=\\(14 \\times \\frac{16}{49}=\\frac{32}{7}\\)。透過複雜比例計算，平行四邊形面積為 \\(14 \\times \\frac{24}{49} = \\frac{48}{7}\\)。" }
+            ],
+             'challenge': [
+                { q: "若 \\( \\triangle ABC \\sim \\triangle DEF \\) 且 \\(\\overline{AB}:\\overline{DE} = 2:5\\)，則 \\( \\triangle ABC \\) 與 \\( \\triangle DEF \\) 的周長比與面積比為何？", o: ["周長比\\(2:5\\), 面積比\\(4:25\\)", "周長比\\(2:5\\), 面積比\\(2:5\\)", "周長比\\(4:25\\), 面積比\\(4:25\\)"], a: "A", ex: "周長比等於邊長比，所以是 2:5。面積比等於邊長的平方比，所以是 \\(2^2:5^2 = 4:25\\)。" },
+                { q: "若兩相似三角形面積比為16:25，且小三角形的周長為40，則大三角形的周長為多少？", o: ["50", "62.5", "100"], a: "A", ex: "面積比是 16:25，所以邊長比是 \\(\\sqrt{16}:\\sqrt{25} = 4:5\\)。周長比也等於邊長比，所以是 4:5。設大三角形周長為x，\\(40:x = 4:5 \\implies 4x = 200 \\implies x=50\\)。" },
+                { q: "(P.69 隨堂練習) \\(\\triangle ABC\\)中，D、E、F為三邊中點，若\\(\\triangle DEF\\)面積為10，則\\(\\triangle ABC\\)面積為何？", o: ["20", "30", "40"], a: "C", ex: "中點連成的三角形面積是原來的 \\(\\frac{1}{4}\\)，所以原三角形面積是小三角形的4倍。10 * 4 = 40。" },
+                { q: "(P.78 自我評量2) 已知 \\(\\overline{AB} // \\overline{CD}\\)，\\(\\overline{EF}\\) 為對應高，\\(\\overline{AB}=12, \\overline{CD}=16, \\overline{EF}=21\\)，求\\(\\triangle ABG\\)與\\(\\triangle DCG\\)的面積。", o: ["面積分別為54, 96", "面積分別為63, 84", "面積皆為126"], a: "A", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-xs mx-auto"><line x1="20" y1="20" x2="100" y2="20" stroke="black"/><text x="15" y="20" font-size="5">A</text><text x="102" y="20" font-size="5">B</text><line x1="10" y1="80" x2="110" y2="80" stroke="black"/><text x="5" y="80" font-size="5">C</text><text x="112" y="80" font-size="5">D</text><line x1="15" y1="20" x2="110" y2="80" stroke="black"/><line x1="105" y1="20" x2="10" y2="80" stroke="black"/><circle cx="60" cy="50" r="1.5" fill="black"/><text x="62" y="50" font-size="5">G</text><line x1="60" y1="20" x2="60" y2="80" stroke="red" stroke-dasharray="2"/><text x="62" y="18" font-size="5">E</text><text x="62" y="85" font-size="5">F</text></svg>', ex: "\\(\\triangle ABG \\sim \\triangle DCG\\)。高之比等於邊長比 = \\(12:16 = 3:4\\)。總高\\(\\overline{EF}=21\\)，所以\\(\\triangle ABG\\)的高 \\(\\overline{EG} = 21 \\times \\frac{3}{7} = 9\\)。\\(\\triangle DCG\\)的高 \\(\\overline{FG} = 21 \\times \\frac{4}{7} = 12\\)。面積A = \\(\\frac{1}{2} \\times 12 \\times 9 = 54\\)。面積B = \\(\\frac{1}{2} \\times 16 \\times 12 = 96\\)。" },
+                { q: "梯形ABCD中，\\(\\overline{AD}//\\overline{BC}\\)，對角線\\(\\overline{AC}\\)與\\(\\overline{BD}\\)交於P點。若\\(\\overline{AD}=6, \\overline{BC}=9\\)，且\\(\\triangle APD\\)的面積為12，求梯形ABCD的面積。", o: ["60", "75", "80"], a: "B", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="30,20 90,20 110,80 10,80" fill="#e0f2fe" stroke="black"/><text x="28" y="18" font-size="5">A</text><text x="92" y="18" font-size="5">D</text><text x="8" y="85" font-size="5">B</text><text x="112" y="85" font-size="5">C</text><line x1="30" y1="20" x2="110" y2="80" stroke="gray"/><line x1="90" y1="20" x2="10" y2="80" stroke="gray"/><circle cx="60" cy="44" r="1.5" fill="black"/><text x="62" y="42" font-size="5">P</text><text x="55" y="15" font-size="5">6</text><text x="55" y="88" font-size="5">9</text></svg>', ex: "\\(\\triangle APD \\sim \\triangle CPB\\) (AA相似)。邊長比 = \\(\\overline{AD}:\\overline{CB} = 6:9 = 2:3\\)。面積比 = \\(2^2:3^2=4:9\\)。\\(\\triangle CPB\\)面積 = \\(12 \\times \\frac{9}{4} = 27\\)。又\\(\\triangle APB\\)與\\(\\triangle DPC\\)面積相等，且 \\(\\triangle APB\\)面積 = \\(\\triangle APD\\)面積 \\(\\times \\frac{PB}{PD} = 12 \\times \\frac{3}{2} = 18\\)。梯形總面積 = 12 + 27 + 18 + 18 = 75。" }
+             ]
+        },
+        'l3': {
+            'example': [
+                { q: "直角\\(\\triangle ABC\\)中，\\(\\angle C=90^\\circ\\), \\(\\angle A=45^\\circ\\), \\(\\overline{AC}=6\\)，求 \\(\\overline{BC}\\) 和 \\(\\overline{AB}\\)。", o: ["\\(\\overline{BC}=6, \\overline{AB}=6\\)", "\\(\\overline{BC}=6\\sqrt{2}, \\overline{AB}=6\\)", "\\(\\overline{BC}=6, \\overline{AB}=6\\sqrt{2}\\)"], a: "C", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,90 90,90 10,10" fill="#f3e8ff" stroke="#a855f7"/><text x="12" y="25" font-size="5">A</text><text x="12" y="85" font-size="5">C</text><text x="92" y="85" font-size="5">B</text><text x="20" y="20" font-size="5">45°</text><text x="40" y="98" font-size="5">6</text></svg>', ex: "因為是 \\(45^\\circ-45^\\circ-90^\\circ\\) 三角形，邊長比為 \\(1:1:\\sqrt{2}\\)。<br>\\(\\overline{AC}:\\overline{BC}:\\overline{AB} = 1:1:\\sqrt{2}\\)<br>因為 \\(\\overline{AC}=6\\)，所以 \\(\\overline{BC}=6\\)，\\(\\overline{AB}=6\\sqrt{2}\\)。" }
+            ],
+            'base': [
+                { q: "(P.75 隨堂練習) 直角\\(\\triangle ABC\\)中，\\(\\angle A=60^\\circ, \\overline{AC}=10\\)，求 \\(\\overline{BC}\\) 和 \\(\\overline{AB}\\)。", o: ["\\(\\overline{BC}=10, \\overline{AB}=20\\)", "\\(\\overline{BC}=10\\sqrt{3}, \\overline{AB}=20\\)"], a: "B", ex: "邊長比 \\(\\overline{AC}:\\overline{BC}:\\overline{AB} = 1:\\sqrt{3}:2\\)。 \\(10:\\overline{BC}:\\overline{AB} = 1:\\sqrt{3}:2\\)。所以 \\(\\overline{BC} = 10\\sqrt{3}\\), \\(\\overline{AB} = 20\\)。" },
+                { q: "一個等腰直角三角形，若一股長為5，求斜邊長。", o: ["5", "\\(5\\sqrt{2}\\)", "10"], a: "B", ex: "邊長比 \\(1:1:\\sqrt{2}\\)。所以斜邊是 \\(5\\sqrt{2}\\)。" },
+                { q: "一個 \\(30^\\circ-60^\\circ-90^\\circ\\) 的直角三角形，若斜邊長為20，求兩股長。", o: ["10 和 \\(10\\sqrt{3}\\)", "10 和 10", "\\(10\\sqrt{2}\\) 和 \\(10\\sqrt{2}\\)"], a: "A", ex: "邊長比 \\(1:\\sqrt{3}:2\\)。斜邊對應2，所以比例是10倍。30度對應的邊是 \\(10 \\times 1=10\\)，60度對應的邊是 \\(10\\sqrt{3}\\)。" }
+            ],
+            'advanced': [
+                { q: "(P.75 重新布題) \\(\\triangle ABC\\)中，\\(\\angle A=30^\\circ, \\angle C=90^\\circ, \\overline{AC}=6\\)，求\\(\\overline{BC}, \\overline{AB}\\)。", o: ["\\(\\overline{BC}=2\\sqrt{3}, \\overline{AB}=4\\sqrt{3}\\)", "\\(\\overline{BC}=3, \\overline{AB}=12\\)"], a: "A", ex: "此為30-60-90三角形。60度(∠B)對應的邊是\\(\\overline{AC}=6\\)。邊長比 \\(\\overline{BC}:\\overline{AC}:\\overline{AB} = 1:\\sqrt{3}:2\\)。 \\(\\overline{BC}:6:\\overline{AB} = 1:\\sqrt{3}:2\\)。\\(\\overline{AC}\\)對應\\(\\sqrt{3}\\)，所以 \\(\\overline{BC}=6/\\sqrt{3}=2\\sqrt{3}\\)。\\(\\overline{AB}=\\overline{BC} \\times 2=4\\sqrt{3}\\)。" },
+                { q: "(P.76 例8) 校慶掛三角旗，已知夾角45°、樓高15公尺，求旗長。", o: ["15 公尺", "\\(15\\sqrt{2}\\) 公尺", "30 公尺"], a: "B", ex: "邊長比 \\(1:1:\\sqrt{2}\\)。樓高對應1，旗長(斜邊)對應\\(\\sqrt{2}\\)。所以旗長是 \\(15\\sqrt{2}\\) 公尺。" },
+                { q: "(P.76 隨堂練習) 電扶梯傾斜角30°，樓高3.6公尺，求電扶梯長度。", o: ["3.6 公尺", "\\(3.6\\sqrt{3}\\) 公尺", "7.2 公尺"], a: "C", ex: "邊長比 \\(1:\\sqrt{3}:2\\)。樓高對應1，電扶梯長(斜邊)對應2。所以長度是 \\(3.6 \\times 2 = 7.2\\) 公尺。" }
+            ],
+            'expert': [
+                { q: "(P.74 重新布題) 如圖，五邊形ABCDE中，\\(\\triangle ABC\\)、\\(\\triangle ACD\\)與\\(\\triangle ADE\\)均為等腰直角三角形，其中\\(\\angle ABC=90^\\circ\\)、\\(\\angle ACD=90^\\circ\\)、\\(\\angle ADE=90^\\circ\\)。若\\(\\overline{AB}=1\\)，則\\(\\overline{AE}\\)為多少？", o: ["2", "\\(2\\sqrt{2}\\)", "4"], a: "B", svg: '<svg viewBox="0 0 85 65" class="w-full h-auto max-w-sm mx-auto"><path d="M 30 50 L 10 50 L 10 30 L 30 10 L 70 10 L 30 50 Z" fill="#fef9c3" stroke="black" stroke-width="0.5" /><line x1="30" y1="50" x2="10" y2="30" stroke="gray" stroke-width="0.5" /><line x1="30" y1="50" x2="30" y2="10" stroke="gray" stroke-width="0.5" /><path d="M 10 48 h 2 v 2" fill="none" stroke="red" stroke-width="0.5"/><path d="M 12 29 L 10 29 L 10 31" fill="none" stroke="red" stroke-width="0.5"/><path d="M 29 12 L 29 10 L 31 10" fill="none" stroke="red" stroke-width="0.5"/><text x="32" y="55" font-size="5">A</text><text x="5" y="55" font-size="5">B</text><text x="5" y="28" font-size="5">C</text><text x="28" y="8" font-size="5">D</text><text x="72" y="15" font-size="5">E</text><text x="18" y="55" font-size="5">1</text></svg>', ex: "因為\\(\\triangle ABC\\)是等腰直角三角形，\\(\\overline{AB}=1\\)，所以\\(\\overline{BC}=1\\)，\\(\\overline{AC}=\\sqrt{1^2+1^2}=\\sqrt{2}\\)。<br>因為\\(\\triangle ACD\\)是等腰直角三角形，\\(\\overline{AC}=\\sqrt{2}\\)，所以\\(\\overline{CD}=\\sqrt{2}\\)，\\(\\overline{AD}=\\sqrt{(\\sqrt{2})^2+(\\sqrt{2})^2}=2\\)。<br>因為\\(\\triangle ADE\\)是等腰直角三角形，\\(\\overline{AD}=2\\)，所以\\(\\overline{DE}=2\\)，\\(\\overline{AE}=\\sqrt{2^2+2^2}=\\sqrt{8}=2\\sqrt{2}\\)。" },
+                { q: "(P.75 重新布題) 複合圖形，\\(\\angle ACB=30^\\circ, \\angle ADB=60^\\circ, \\overline{CD}=50\\)，求\\(\\overline{AB}\\)。", o: ["\\(25\\sqrt{3}\\)", "50", "25"], a: "A", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><path d="M 110 70 V 10" stroke="black"/><text x="112" y="10" font-size="5">B</text><text x="112" y="75" font-size="5">A</text><line x1="10" y1="70" x2="110" y2="70" stroke="black"/><text x="8" y="75" font-size="5">C</text><text x="68" y="75" font-size="5">D</text><line x1="10" y1="70" x2="110" y2="10"/><line x1="70" y1="70" x2="110" y2="10"/><text x="15" y="65" font-size="5">30°</text><text x="75" y="65" font-size="5">60°</text><text x="35" y="78" font-size="5">50</text></svg>', ex: "設 \\(\\overline{AB}=x\\)。在\\(\\triangle ABD\\)中，\\(\\overline{AD} = x/\\tan(60^\\circ) = x/\\sqrt{3}\\)。在\\(\\triangle ABC\\)中，\\(\\overline{AC} = x/\\tan(30^\\circ) = x/(1/\\sqrt{3}) = x\\sqrt{3}\\)。\\(\\overline{AC}=\\overline{AD}+\\overline{DC} \\implies x\\sqrt{3} = x/\\sqrt{3} + 50 \\implies 3x = x + 50\\sqrt{3} \\implies 2x = 50\\sqrt{3} \\implies x=25\\sqrt{3}\\)。" },
+                { q: "(P.80 自我評量7) 自A點看山頂仰角30°，前進500公尺到B點看山頂仰角45°，求山高。", o: ["\\(250(\\sqrt{3}-1)\\)", "\\(250(\\sqrt{3}+1)\\)", "500"], a: "B", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><path d="M 100 70 V 10" stroke="black"/><text x="102" y="10" font-size="5">D</text><text x="102" y="75" font-size="5">C</text><line x1="10" y1="70" x2="100" y2="70" stroke="black"/><text x="8" y="75" font-size="5">A</text><text x="58" y="75" font-size="5">B</text><line x1="10" y1="70" x2="100" y2="10"/><line x1="60" y1="70" x2="100" y2="10"/><text x="15" y="65" font-size="5">30°</text><text x="65" y="65" font-size="5">45°</text><text x="30" y="78" font-size="5">500</text></svg>', ex: "設山高\\(\\overline{CD}=x\\)。在\\(\\triangle BCD\\)中，\\(\\overline{BC}=x\\) (因為45度)。在\\(\\triangle ACD\\)中，\\(\\overline{AC} = x/\\tan(30^\\circ) = x\\sqrt{3}\\)。\\(\\overline{AC}=\\overline{AB}+\\overline{BC} \\implies x\\sqrt{3} = 500+x \\implies x(\\sqrt{3}-1)=500 \\implies x = \\frac{500}{\\sqrt{3}-1} = 250(\\sqrt{3}+1)\\)。" }
+            ],
+            'challenge': [
+                { q: "一個正方形的對角線長為 \\(10\\sqrt{2}\\)，求其邊長與面積。", o: ["邊長10, 面積100", "邊長10, 面積\\(10\\sqrt{2}\\)", "邊長\\(5\\sqrt{2}\\), 面積50"], a: "A", ex: "等腰直角三角形斜邊是 \\(10\\sqrt{2}\\)，所以兩股(邊長)都是10。面積 = \\(10^2 = 100\\)。" },
+                { q: "一個正三角形的高為 \\(9\\sqrt{3}\\)，求其邊長與周長。", o: ["邊長18, 周長54", "邊長9, 周長27", "邊長\\(9\\sqrt{3}\\), 周長\\(27\\sqrt{3}\\)"], a: "A", ex: "高對應 \\(\\sqrt{3}\\)，所以比例是9倍。30度對的邊(半個底邊)是9，斜邊(邊長)是18。周長 = \\(18 \\times 3 = 54\\)。" },
+                { q: "(P.76 例8) 如圖，一面三角旗(AB)從15公尺高的校舍B點掛到地板的A點，已知旗子與地板的夾角 ∠A 為45°，求三角旗的長度(AB)。", o: ["\\(15\\sqrt{2}\\) 公尺", "15 公尺", "30 公尺"], a: "A", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><line x1="10" y1="80" x2="90" y2="80" stroke="black" /><text x="40" y="90" font-size="5">地板 (AC)</text><line x1="90" y1="80" x2="90" y2="10" stroke="gray" stroke-width="4" /><text x="95" y="45" font-size="5">校舍高 15m</text><line x1="10" y1="80" x2="90" y2="10" stroke="red" stroke-width="2" /><text x="8" y="85" font-size="5">A</text><text x="92" y="8" font-size="5">B</text><text x="92" y="85" font-size="5">C</text><text x="40" y="40" font-size="6">旗長(AB)</text><path d="M 15 80 h 5 v -5" fill="none" stroke="black" stroke-width="0.5" /><text x="22" y="75" font-size="5">45°</text><path d="M 85 80 h 5 v -5" fill="none" stroke="black" stroke-width="0.5" /></svg>', ex: "此為45°-45°-90°三角形，邊長比為 1:1:\\(\\sqrt{2}\\)。校舍高(股)對應1，旗長(斜邊)對應\\(\\sqrt{2}\\)。設旗長為x，則 \\(15:x = 1:\\sqrt{2}\\) \\(\\implies x = 15\\sqrt{2}\\) 公尺。" },
+                { q: "(P.79 自我評量6) 直角\\(\\triangle ABC\\)中，\\(\\angle A=30^\\circ\\)，面積為 \\(8\\sqrt{3}\\)，求周長。", o: ["\\(12+4\\sqrt{3}\\)", "24", "\\(12+\\sqrt{3}\\)"], a: "A", ex: "設30度對的邊\\(\\overline{BC}=x\\)，則60度對的邊\\(\\overline{AB}=x\\sqrt{3}\\)。面積 \\(\\frac{1}{2}x \\cdot x\\sqrt{3}=8\\sqrt{3} \\implies x^2=16 \\implies x=4\\)。三邊長為 4, \\(4\\sqrt{3}\\), 8。周長 = \\(12+4\\sqrt{3}\\)。" },
+                { q: "(P.80 自我評量7) 在A點測得山頂仰角30°，朝山的方向前進500公尺到達B點，再測得山頂仰角為45°，求山高。", o: ["\\(250(\\sqrt{3}-1)\\)", "\\(250(\\sqrt{3}+1)\\)", "500"], a: "B", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><path d="M 100 70 V 10" stroke="black" stroke-width="2"/><text x="102" y="10" font-size="5">D (山頂)</text><text x="102" y="75" font-size="5">C</text><line x1="10" y1="70" x2="100" y2="70" stroke="black"/><text x="8" y="75" font-size="5">A</text><text x="58" y="75" font-size="5">B</text><line x1="10" y1="70" x2="100" y2="10" stroke="orange"/><line x1="60" y1="70" x2="100" y2="10" stroke="orange"/><text x="15" y="65" font-size="5">30°</text><text x="65" y="65" font-size="5">45°</text><text x="30" y="78" font-size="5">500m</text></svg>', ex: "設山高\\(\\overline{CD}=x\\)。在\\(\\triangle BCD\\)中，因為是45°直角三角形，\\(\\overline{BC}=x\\)。在\\(\\triangle ACD\\)中，\\(\\tan(30^\\circ) = \\frac{x}{\\overline{AC}} \\implies \\overline{AC} = \\frac{x}{1/\\sqrt{3}} = x\\sqrt{3}\\)。又 \\(\\overline{AC}=\\overline{AB}+\\overline{BC} \\implies x\\sqrt{3}=500+x \\implies x(\\sqrt{3}-1)=500 \\implies x = \\frac{500}{\\sqrt{3}-1} = 250(\\sqrt{3}+1)\\)。" }
+            ]
+        },
+        'l4': {
+            'example': [
+                { q: "直角\\(\\triangle ABC\\)三邊長為8, 15, 17，\\(\\angle C=90^\\circ\\)，下列何者正確？", o: ["\\( \\sin A = \\frac{8}{17} \\)", "\\( \\cos A = \\frac{8}{17} \\)", "\\( \\tan A = \\frac{15}{8} \\)"], a: "A", svg: '<svg viewBox="0 0 100 70" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,60 90,60 90,10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="5" y="60" font-size="5">A</text><text x="92" y="60" font-size="5">C</text><text x="92" y="10" font-size="5">B</text><text x="45" y="68" font-size="5">15</text><text x="95" y="35" font-size="5">8</text><text x="40" y="30" font-size="5">17</text></svg>', ex: "相對於角A，對邊=8, 鄰邊=15, 斜邊=17。<br>\\(\\sin A = \\frac{對}{斜} = \\frac{8}{17}\\)<br>\\(\\cos A = \\frac{鄰}{斜} = \\frac{15}{17}\\)<br>\\(\\tan A = \\frac{對}{鄰} = \\frac{8}{15}\\)" }
+            ],
+            'base': [
+                { q: "(P.72 隨堂練習) 直角\\(\\triangle ABC\\)三邊長為3, 4, 5，求 sin A, cos A, tan A (角C為直角)。", o: ["\\(\\sin A=\\frac{3}{5}, \\cos A=\\frac{4}{5}, \\tan A=\\frac{3}{4}\\)", "\\(\\sin A=\\frac{4}{5}, \\cos A=\\frac{3}{5}, \\tan A=\\frac{4}{3}\\)"], a: "A", svg: '<svg viewBox="0 0 100 80" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,70 90,70 90,10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="5" y="70" font-size="5">A</text><text x="92" y="70" font-size="5">C</text><text x="92" y="8" font-size="5">B</text><text x="45" y="78" font-size="5">4</text><text x="95" y="40" font-size="5">3</text><text x="40" y="35" font-size="5">5</text></svg>', ex: "對邊=3, 鄰邊=4, 斜邊=5。\\(\\sin A = \\frac{對}{斜} = \\frac{3}{5}, \\cos A = \\frac{鄰}{斜} = \\frac{4}{5}, \\tan A = \\frac{對}{鄰} = \\frac{3}{4}\\)。" },
+                { q: "給定一個直角三角形，\\(\\angle C=90^\\circ\\)，請標示出相對於\\(\\angle B\\)的「對邊」、「鄰邊」與「斜邊」。", o: ["對邊=\\(\\overline{AC}\\), 鄰邊=\\(\\overline{BC}\\)", "對邊=\\(\\overline{BC}\\), 鄰邊=\\(\\overline{AC}\\)", "對邊=\\(\\overline{AB}\\), 鄰邊=\\(\\overline{AC}\\)"], a: "A", svg: '<svg viewBox="0 0 100 80" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,70 90,70 10,10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="5" y="8" font-size="5">A</text><text x="5" y="75" font-size="5">B</text><text x="92" y="70" font-size="5">C</text><text x="50" y="40" font-size="6" fill="red">對邊</text><text x="12" y="40" font-size="6" fill="red">鄰邊</text><text x="40" y="25" font-size="6" fill="red" transform="rotate(-45 40 25)">斜邊</text></svg>', ex: "從角B看出去，正對面是\\(\\overline{AC}\\)(對邊)，旁邊的是\\(\\overline{BC}\\)(鄰邊)，最長的是\\(\\overline{AB}\\)(斜邊)。" },
+                { q: "(P.72 重新布題) 直角\\(\\triangle ABC\\)三邊長為7, 24, 25，求 sin B, cos B, tan B (角C為直角)。", o: ["\\(\\sin B=\\frac{7}{25}, \\cos B=\\frac{24}{25}, \\tan B=\\frac{7}{24}\\)", "\\(\\sin B=\\frac{24}{25}, \\cos B=\\frac{7}{25}, \\tan B=\\frac{24}{7}\\)"], a: "A", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,90 90,90 10,10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="5" y="8" font-size="5">A</text><text x="5" y="95" font-size="5">B</text><text x="92" y="90" font-size="5">C</text><text x="12" y="50" font-size="5">7</text><text x="45" y="98" font-size="5">24</text><text x="40" y="45" font-size="5">25</text></svg>', ex: "相對於角B，對邊=\\(\\overline{AC}=7\\), 鄰邊=\\(\\overline{BC}=24\\), 斜邊=\\(\\overline{AB}=25\\)。\\(\\sin B = \\frac{7}{25}, \\cos B = \\frac{24}{25}, \\tan B = \\frac{7}{24}\\)。" }
+            ],
+            'advanced': [
+                { q: "若 \\(\\sin A = \\frac{5}{13}\\)，且\\(\\triangle ABC\\)為直角三角形，求 cos A 和 tan A。", o: ["\\(\\cos A = \\frac{12}{13}, \\tan A = \\frac{5}{12}\\)", "\\(\\cos A = \\frac{5}{13}, \\tan A = \\frac{5}{12}\\)"], a: "A", svg: '<svg viewBox="0 0 100 80" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,70 90,70 90,10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="5" y="70" font-size="5">A</text><text x="92" y="70" font-size="5">C</text><text x="92" y="8" font-size="5">B</text><text x="45" y="78" font-size="5">12</text><text x="95" y="40" font-size="5">5</text><text x="40" y="35" font-size="5">13</text></svg>', ex: "\\(\\sin A = \\frac{5}{13}\\) 表示 對邊=5, 斜邊=13。由畢氏定理，鄰邊 = \\(\\sqrt{13^2-5^2}=12\\)。所以 \\(\\cos A = \\frac{鄰}{斜} = \\frac{12}{13}, \\tan A = \\frac{對}{鄰} = \\frac{5}{12}\\)。" },
+                { q: "(P.73 例6) 車道與水平夾角6°，垂直高度200公尺，求車道長度 (使用 \\(\\sin 6^\\circ \\approx 0.1045\\))。", o: ["約 1913 公尺", "約 2000 公尺", "約 20.9 公尺"], a: "A", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,70 110,70 110,10" fill="#a5f3fc" stroke="#0891b2"/><line x1="10" y1="70" x2="110" y2="70" stroke-width="1" stroke="black"/><text x="112" y="40" font-size="5">高=200m</text><text x="50" y="35" font-size="5">車道 x</text><text x="15" y="65" font-size="5">6°</text></svg>', ex: "\\(\\sin 6^\\circ = \\frac{高度}{長度} = \\frac{200}{x}\\)。 \\(x = \\frac{200}{\\sin 6^\\circ} \\approx \\frac{200}{0.1045} \\approx 1913.8\\) 公尺。" },
+                { q: "(P.73 隨堂練習) 承上題，求水平距離 (使用 \\(\\tan 6^\\circ \\approx 0.1051\\))。", o: ["約 1903 公尺", "約 21 公尺", "約 1913 公尺"], a: "A", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,70 110,70 110,10" fill="#a5f3fc" stroke="#0891b2"/><line x1="10" y1="70" x2="110" y2="70" stroke-width="1" stroke="black"/><text x="112" y="40" font-size="5">高=200m</text><text x="50" y="78" font-size="5">水平距離 y</text><text x="15" y="65" font-size="5">6°</text></svg>', ex: "\\(\\tan 6^\\circ = \\frac{高度}{水平距離} = \\frac{200}{y}\\)。 \\(y = \\frac{200}{\\tan 6^\\circ} \\approx \\frac{200}{0.1051} \\approx 1902.9\\) 公尺。" }
+            ],
+            'expert': [
+                { q: "(P.73 重新布題) 汽車沿斜坡行駛1500公尺，夾角7.5°，求水平距離 (使用 \\(\\cos 7.5^\\circ \\approx 0.9914\\))。", o: ["約 1487 公尺", "約 197 公尺", "約 11390 公尺"], a: "A", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,70 110,70 110,20" fill="#a5f3fc" stroke="#0891b2"/><line x1="10" y1="70" x2="110" y2="70" stroke-width="1" stroke="black"/><text x="50" y="40" font-size="5">斜坡長=1500m</text><text x="50" y="78" font-size="5">水平距離 x</text><text x="15" y="65" font-size="5">7.5°</text></svg>', ex: "\\(\\cos 7.5^\\circ = \\frac{水平距離}{斜坡長}\\)。水平距離 = \\(1500 \\times \\cos 7.5^\\circ \\approx 1500 \\times 0.9914 \\approx 1487.1\\) 公尺。" },
+                { q: "在坐標平面上，P點坐標為(4, 3)，求\\(\\overline{OP}\\)與x軸正向夾角θ的 sinθ, cosθ, tanθ。", o: ["\\(\\sin\\theta=\\frac{3}{5}, \\cos\\theta=\\frac{4}{5}, \\tan\\theta=\\frac{3}{4}\\)", "\\(\\sin\\theta=\\frac{4}{5}, \\cos\\theta=\\frac{3}{5}, \\tan\\theta=\\frac{4}{3}\\)"], a: "A", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><line x1="50" y1="0" x2="50" y2="100" stroke="gray" stroke-width="0.5"/><line x1="0" y1="50" x2="100" y2="50" stroke="gray" stroke-width="0.5"/><text x="95" y="48" font-size="5">x</text><text x="45" y="8" font-size="5">y</text><polygon points="50,50 90,50 90,20" fill="#e0f2fe" stroke="#0ea5e9"/><line x1="50" y1="50" x2="90" y2="20" stroke="black" stroke-width="1.5"/><circle cx="90" cy="20" r="2" fill="red"/><text x="92" y="20" font-size="5">P(4,3)</text><text x="70" y="55" font-size="5">4</text><text x="93" y="35" font-size="5">3</text><text x="52" y="48" font-size="5">θ</text></svg>', ex: "畫出直角三角形，鄰邊=4, 對邊=3, 斜邊=5。\\(\\sin\\theta=\\frac{3}{5}, \\cos\\theta=\\frac{4}{5}, \\tan\\theta=\\frac{3}{4}\\)。" },
+                { q: "(P.79 自我評量5) 已知風箏線長50公尺，與水平夾角70°，求風箏高度 (使用 \\(\\sin 70^\\circ \\approx 0.94\\))。", o: ["約 53 公尺", "約 17 公尺", "約 47 公尺"], a: "C", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="90" x2="110" y2="90" stroke="black"/><path d="M 10 90 L 90 20" stroke="blue" stroke-width="2" /><path d="M 85 15 L 90 20 L 95 18 Z" fill="red"/><text x="40" y="50" font-size="5">線長=50m</text><line x1="90" y1="20" x2="90" y2="90" stroke="black" stroke-dasharray="2"/><text x="92" y="55" font-size="5">高度 h</text><text x="15" y="85" font-size="5">70°</text></svg>', ex: "\\(\\sin 70^\\circ = \\frac{高度}{線長}\\)。高度 = \\(50 \\times \\sin 70^\\circ \\approx 50 \\times 0.94 = 47\\) 公尺。" }
+            ],
+            'challenge': [
+                 { q: "直角三角形兩股長為 6 和 8，求斜邊上兩銳角的 sin, cos, tan 值。", o: ["sinA=\\(\\frac{3}{5}\\), sinB=\\(\\frac{4}{5}\\)", "sinA=\\(\\frac{4}{5}\\), sinB=\\(\\frac{3}{5}\\)"], a: "A", svg: '<svg viewBox="0 0 100 80" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,70 90,70 10,10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="5" y="8" font-size="5">A</text><text x="5" y="75" font-size="5">B</text><text x="92" y="70" font-size="5">C</text><text x="45" y="78" font-size="5">8</text><text x="12" y="40" font-size="5">6</text><text x="40" y="35" font-size="5">10</text></svg>', ex: "斜邊=10。設A對應的股長為6(對邊)，B對應的股長為8。\\(\\sin A=\\frac{6}{10}=\\frac{3}{5}, \\cos A=\\frac{8}{10}=\\frac{4}{5}, \\tan A=\\frac{6}{8}=\\frac{3}{4}\\)。\\(\\sin B=\\frac{8}{10}=\\frac{4}{5}, \\cos B=\\frac{6}{10}=\\frac{3}{5}, \\tan B=\\frac{8}{6}=\\frac{4}{3}\\)。" },
+                 { q: "在直角\\(\\triangle ABC\\)中，\\(\\angle C=90^\\circ\\)，若 \\(\\tan A = \\frac{4}{3}\\)，求 sin A 和 cos A。", o: ["\\(\\sin A=\\frac{4}{5}, \\cos A=\\frac{3}{5}\\)", "\\(\\sin A=\\frac{3}{5}, \\cos A=\\frac{4}{5}\\)"], a: "A", svg: '<svg viewBox="0 0 100 80" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,70 90,70 90,10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="5" y="70" font-size="5">A</text><text x="92" y="70" font-size="5">C</text><text x="92" y="8" font-size="5">B</text><text x="45" y="78" font-size="5">3</text><text x="95" y="40" font-size="5">4</text><text x="40" y="35" font-size="5">5</text></svg>', ex: "\\(\\tan A=\\frac{4}{3}\\) 表示對邊=4, 鄰邊=3。斜邊=\\(\\sqrt{3^2+4^2}=5\\)。\\(\\sin A=\\frac{4}{5}, \\cos A=\\frac{3}{5}\\)。" },
+                 { q: "一座山坡的坡度為 \\(\\frac{1}{2}\\) (\\(\\tan\\theta\\))，若在山坡上水平前進100公尺，則垂直高度上升多少公尺？", o: ["200公尺", "50公尺", "100公尺"], a: "B", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,70 110,70 110,20" fill="#a5f3fc" stroke="#0891b2"/><line x1="10" y1="70" x2="110" y2="70" stroke-width="1" stroke="black"/><text x="112" y="45" font-size="5">h</text><text x="50" y="78" font-size="5">100m</text><text x="15" y="65" font-size="5">θ</text></svg>', ex: "坡度 = \\(\\tan\\theta = \\frac{高度}{水平距離}\\)。\\(\\frac{1}{2} = \\frac{h}{100} \\implies h=50\\)公尺。" },
+                 { q: "(P.73 例6) 若自行車道的長度AC為2000公尺，夾角為6°，求垂直高度BC (使用 \\(\\sin 6^\\circ \\approx 0.1045\\))。", o: ["約 209 公尺", "約 1991 公尺"], a: "A", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,70 110,70 110,10" fill="#a5f3fc" stroke="#0891b2"/><text x="112" y="40" font-size="5">BC (高)</text><text x="50" y="35" font-size="5">AC=2000m</text><text x="15" y="65" font-size="5">6°</text></svg>', ex: "\\(\\sin 6^\\circ = \\frac{BC}{AC}\\)。 \\(\\overline{BC} = 2000 \\times \\sin 6^\\circ \\approx 2000 \\times 0.1045 = 209\\) 公尺。" },
+                 { q: "(P.79 自我評量5) 若希望風箏高度達到50公尺，在風箏線與水平夾角70°不變的情況下，線要放多長 (使用 \\(\\sin 70^\\circ \\approx 0.94\\))？", o: ["約 47 公尺", "約 53 公尺"], a: "B", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-sm mx-auto"><line x1="10" y1="90" x2="110" y2="90" stroke="black"/><path d="M 10 90 L 90 20" stroke="blue" stroke-width="2" /><path d="M 85 15 L 90 20 L 95 18 Z" fill="red"/><text x="40" y="50" font-size="5">線長 x</text><line x1="90" y1="20" x2="90" y2="90" stroke="black" stroke-dasharray="2"/><text x="92" y="55" font-size="5">高度=50m</text><text x="15" y="85" font-size="5">70°</text></svg>', ex: "\\(\\sin 70^\\circ = \\frac{高度}{線長}\\)。線長 = \\(\\frac{50}{\\sin 70^\\circ} \\approx \\frac{50}{0.94} \\approx 53.2\\) 公尺。" }
+            ]
+        },
+        'l5': {
+            'example': [
+                { q: "小妍的解法：「因為D是\\(\\overline{AB}\\)中點，所以\\(\\overline{BD}:\\overline{AB}=1:2\\)，故\\(\\triangle EBD\\)面積:\\(\\triangle ABC\\)面積 = \\(1^2:2^2 = \\frac{1}{4}\\)」。這個解法哪裡錯了？", o: ["她沒有錯", "\\(\\overline{BD}\\)的對應邊找錯了", "面積比不用平方"], a: "B", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,10 10,90 110,90" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/><polygon points="10,50 10,90 60,90" fill="#fde68a" stroke="#f59e0b" stroke-width="1"/><text x="5" y="10" font-size="5">A</text><text x="5" y="95" font-size="5">B</text><text x="112" y="95" font-size="5">C</text><circle cx="10" cy="50" r="2" fill="black"/><text x="0" y="53" font-size="5">D</text><circle cx="60" cy="90" r="2" fill="black"/><text x="58" y="85" font-size="5">E</text></svg>', ex: "錯誤！在 \\(\\triangle EBD\\) 和 \\(\\triangle ABC\\) 中，\\(\\overline{BD}\\) 的對應邊是 \\(\\overline{BC}\\)，不是 \\(\\overline{AB}\\)。<br>正確的比例是：<br>\\(\\overline{BD} : \\overline{BC} = 20 : 50 = 2:5\\)<br>所以面積比是 \\(2^2 : 5^2 = 4 : 25\\)。" }
+            ],
+            'base': [
+                { q: "複習題：一棵樹高8公尺，影長10公尺；旁邊小花的影長50公分，求小花高度。", o: ["40 公分", "62.5 公分", "50 公分"], a: "A", svg: '<svg viewBox="0 0 160 80" class="w-full h-auto max-w-sm mx-auto"><line x1="0" y1="70" x2="160" y2="70" stroke="black"/><path d="M 40 70 V 10" stroke="green" stroke-width="4"/><text x="30" y="8" font-size="5">8m</text><line x1="40" y1="70" x2="90" y2="70" stroke-width="2" stroke="rgba(0,0,0,0.5)"/><text x="60" y="78" font-size="5">10m</text><line x1="40" y1="10" x2="90" y2="70" stroke="orange" stroke-dasharray="2"/><path d="M 120 70 V 50" stroke="red" stroke-width="2"/><text x="122" y="50" font-size="5">x</text><line x1="120" y1="70" x2="145" y2="70" stroke-width="2" stroke="rgba(0,0,0,0.5)"/><text x="125" y="78" font-size="5">50cm</text><line x1="120" y1="50" x2="145" y2="70" stroke="orange" stroke-dasharray="2"/></svg>', ex: "\\(8:10 = x:0.5\\) (注意單位換算)。\\(10x=4 \\implies x=0.4\\)公尺，即40公分。" },
+                { q: "複習題：兩相似三角形邊長比3:4，小三角形面積18，求大三角形面積。", o: ["24", "32", "48"], a: "B", svg: '<svg viewBox="0 0 170 80" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,70 60,70 35,20" fill="#a7f3d0" stroke="green"/><text x="30" y="15" font-size="6">A=18</text><text x="75" y="50">~</text><polygon points="90,70 160,70 125,0" fill="#bae6fd" stroke="blue"/><text x="120" y="15" font-size="6">A=?</text><text x="30" y="78" font-size="5">3k</text><text x="120" y="78" font-size="5">4k</text></svg>', ex: "面積比 = \\(3^2:4^2 = 9:16\\)。\\(18:x = 9:16 \\implies 9x = 18 \\times 16 \\implies x=32\\)。" },
+                { q: "複習題：一個30-60-90三角形，已知最短股為6，求另兩邊。", o: ["6, 12", "\\(6\\sqrt{3}\\), 12", "\\(6\\sqrt{2}\\), 12"], a: "B", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,90 90,90 10,10" fill="#f3e8ff" stroke="#a855f7"/><text x="12" y="25" font-size="5">A(60°)</text><text x="12" y="85" font-size="5">C(90°)</text><text x="75" y="85" font-size="5">B(30°)</text><text x="40" y="98" font-size="5">6</text></svg>', ex: "最短股(對30度)為6，則60度對的邊為\\(6\\sqrt{3}\\)，斜邊為12。" }
+            ],
+            'advanced': [
+                { q: "(P.78 自我評量2) \\(\\overline{AB} // \\overline{CD}\\)，\\(\\overline{AD}\\)與\\(\\overline{BC}\\)交於G，\\(\\overline{AB}=12, \\overline{CD}=16\\)，\\(\\triangle ABG\\)高為9，求\\(\\triangle DCG\\)面積。", o: ["96", "128", "72"], a: "A", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-xs mx-auto"><line x1="20" y1="20" x2="100" y2="20" stroke="black"/><text x="15" y="20" font-size="5">A</text><text x="102" y="20" font-size="5">B</text><line x1="10" y1="80" x2="110" y2="80" stroke="black"/><text x="5" y="80" font-size="5">D</text><text x="112" y="80" font-size="5">C</text><line x1="20" y1="20" x2="110" y2="80" stroke="gray"/><line x1="100" y1="20" x2="10" y2="80" stroke="gray"/><circle cx="60" cy="44" r="1.5" fill="black"/><text x="62" y="42" font-size="5">G</text><text x="55" y="15" font-size="5">12</text><text x="55" y="88" font-size="5">16</text><line x1="60" y1="20" x2="60" y2="44" stroke="red" stroke-dasharray="2"/><text x="62" y="32" font-size="5">h=9</text></svg>', ex: "\\(\\triangle ABG \\sim \\triangle DCG\\)，邊長比 \\(12:16=3:4\\)。高之比也為3:4。若\\(\\triangle ABG\\)高為9，則\\(\\triangle DCG\\)高為12。面積 = \\(\\frac{1}{2} \\times 16 \\times 12 = 96\\)。" },
+                { q: "(P.80 自我評量7) 自A點看山頂仰角30°，前進500公尺到B點看山頂仰角45°，求山高。", o: ["\\(250(\\sqrt{3}-1)\\)", "\\(250(\\sqrt{3}+1)\\)"], a: "B", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><path d="M 100 70 V 10" stroke="black" stroke-width="2"/><text x="102" y="10" font-size="5">D (山頂)</text><text x="102" y="75" font-size="5">C</text><line x1="10" y1="70" x2="100" y2="70" stroke="black"/><text x="8" y="75" font-size="5">A</text><text x="58" y="75" font-size="5">B</text><line x1="10" y1="70" x2="100" y2="10" stroke="orange"/><line x1="60" y1="70" x2="100" y2="10" stroke="orange"/><text x="15" y="65" font-size="5">30°</text><text x="65" y="65" font-size="5">45°</text><text x="30" y="78" font-size="5">500m</text></svg>', ex: "設山高\\(\\overline{CD}=x\\)。\\(\\overline{BC}=x\\)。\\(\\overline{AC}=x\\sqrt{3}\\)。\\(\\overline{AC}=\\overline{AB}+\\overline{BC} \\implies x\\sqrt{3}=500+x \\implies x=250(\\sqrt{3}+1)\\)。" },
+                { q: "(P.81 一題多解) \\(\\angle A=90^\\circ, \\overline{AB}=12, \\overline{AC}=16\\)，\\(\\overline{BC}\\)中垂線交\\(\\overline{AC}\\)於D，求\\(\\overline{CD}\\)。", o: ["\\(\\frac{25}{2}\\)", "12", "10"], a: "A", svg: '<svg viewBox="0 0 180 140" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,10 10,130 170,10" fill="#fef9c3" stroke="black"/><text x="5" y="8" font-size="6">A</text><text x="5" y="135" font-size="6">B</text><text x="172" y="8" font-size="6">C</text><text x="0" y="70" font-size="6">12</text><text x="80" y="5" font-size="6">16</text><circle cx="90" cy="70" r="2" fill="red"/><text x="92" y="68" font-size="5">M</text><line x1="45" y1="10" x2="114" y2="92" stroke="red" stroke-dasharray="2"/><text x="40" y="5" font-size="6">D</text><path d="M 90 70 L 86 73 L 87 68" stroke="red" fill="none"/><line x1="10" y1="130" x2="45" y2="10" stroke="blue" stroke-dasharray="2"/></svg>', ex: "設 \\(\\overline{CD}=x\\)，則 \\(\\overline{AD}=16-x\\)。中垂線 \\(\\overline{BD}=\\overline{CD}=x\\)。在\\(\\triangle ABD\\)中，\\(x^2 = 12^2 + (16-x)^2 \\implies x^2 = 144 + 256-32x+x^2 \\implies 32x=400 \\implies x=\\frac{400}{32}=\\frac{25}{2}\\)。" }
+            ],
+            'expert': [
+                { q: "(P.78 歷屆試題) 邊長6公分的正八邊形，是否能套在半徑8公分的花瓶外？", o: ["能", "不能"], a: "B", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><circle cx="50" cy="50" r="40" stroke="blue" stroke-width="1.5" fill="none" /><text x="52" y="55" font-size="4" fill="blue">花瓶(r=8)</text><polygon points="79.3,64.1 64.1,79.3 35.9,79.3 20.7,64.1 20.7,35.9 35.9,20.7 64.1,20.7 79.3,35.9" fill="#fef9c3" stroke="black"/><text x="45" y="18" font-size="4">邊=6</text></svg>', ex: "正八邊形的外接圓直徑需要大於花瓶直徑(16公分)。設外接圓半徑R。\\(R = \\frac{6 \\times \\sin(67.5^\\circ)}{\\sin(45^\\circ)} \\approx \\frac{6 \\times 0.92}{0.71} \\approx 7.77\\)。直徑約15.54公分，小於16，所以不能。" },
+                { q: "(P.80 歷屆試題) 如圖，\\(\\triangle ABC\\)中 \\(\\overline{DE} // \\overline{BC}\\)，且\\(\\overline{AD}:\\overline{DB}=3:4\\)。以\\(\\overline{DE}\\)為一邊，往下作平行四邊形DEFG，使F, G在\\(\\overline{BC}\\)上。若\\(\\triangle ABC\\)面積為14，求平行四邊形DEFG面積。", o: ["\\(\\frac{14}{7}\\)", "\\(\\frac{48}{7}\\)", "\\(\\frac{80}{7}\\)"], a: "B", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="50,10 10,90 90,90" fill="#e0f2fe" stroke="black"/><text x="48" y="8" font-size="5">A</text><text x="5" y="95" font-size="5">B</text><text x="92" y="95" font-size="5">C</text><polygon points="32.9,44.3 67.1,44.3 57.1,90 22.9,90" fill="#fecaca" stroke="red"/><text x="30" y="42" font-size="5">D</text><text x="69" y="42" font-size="5">E</text><text x="18" y="95" font-size="5">G</text><text x="59" y="95" font-size="5">F</text><text x="35" y="28" font-size="5" fill="blue">3</text><text x="18" y="68" font-size="5" fill="blue">4</text></svg>', ex: "這是一個特定的相似形應用題。設 \\(\\overline{AD}:\\overline{AB} = x:(x+y)\\)。此平行四邊形面積與原三角形面積比為 \\(2xy:(x+y)^2\\)。<br>在此題中，\\(\\overline{AD}:\\overline{DB} = 3:4\\)，所以 \\(\\overline{AD}:\\overline{AB} = 3:7\\)。<br>平行四邊形面積 = \\(\\triangle ABC \\text{面積} \\times \\frac{2 \\times 3 \\times 4}{(3+4)^2} = 14 \\times \\frac{24}{49} = \\frac{2 \\times 24}{7} = \\frac{48}{7}\\)。" },
+                { q: "(P.81 非選挑戰題) \\(\\angle ACB=2\\angle ABC, \\overline{BC}=\\overline{CD}=6, \\overline{AC}=4\\)，求\\(\\overline{AB}\\)。", o: ["\\(2\\sqrt{10}\\)", "\\(\\sqrt{40}\\)", "以上皆是"], a: "C", svg: '<svg viewBox="0 0 160 100" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,80 110,80 50,10" fill="#f1f5f9" stroke="black" /><text x="8" y="85" font-size="5">A</text><text x="112" y="85" font-size="5">C</text><text x="48" y="8" font-size="5">B</text><line x1="110" y1="80" x2="150" y2="80" stroke-dasharray="2" stroke="gray"/><text x="152" y="85" font-size="5">D</text><line x1="50" y1="10" x2="150" y2="80" stroke="gray"/><text x="55" y="88" font-size="5">4</text><text x="128" y="88" font-size="5">6</text><text x="75" y="50" font-size="5">6</text><text x="25" y="70" font-size="5">x</text><text x="100" y="70" font-size="5">2x</text></svg>', ex: "作\\(\\angle BCD\\)的角平分線交\\(\\overline{BD}\\)於E。可證\\(\\triangle ABC \\sim \\triangle ADB\\) (AA相似)。\\(\\overline{AC}:\\overline{AB}=\\overline{AB}:\\overline{AD} \\implies 4:\\overline{AB}=\\overline{AB}:(4+6) \\implies \\overline{AB}^2=40 \\implies \\overline{AB}=\\sqrt{40}=2\\sqrt{10}\\)。" }
+            ],
+            'challenge': [
+                { q: "從地面A點測得塔頂仰角30°，向塔前進30公尺到B點，測得仰角60°，求塔高。", o: ["\\(15\\sqrt{3}\\)", "30", "15"], a: "A", svg: '<svg viewBox="0 0 120 80" class="w-full h-auto max-w-sm mx-auto"><path d="M 100 70 V 10" stroke="black" stroke-width="2"/><text x="102" y="10" font-size="5">塔頂</text><text x="102" y="75" font-size="5">C</text><line x1="10" y1="70" x2="100" y2="70" stroke="black"/><text x="8" y="75" font-size="5">A</text><text x="48" y="75" font-size="5">B</text><line x1="10" y1="70" x2="100" y2="10" stroke="orange"/><line x1="50" y1="70" x2="100" y2="10" stroke="orange"/><text x="15" y="65" font-size="5">30°</text><text x="55" y="65" font-size="5">60°</text><text x="25" y="78" font-size="5">30m</text></svg>', ex: "設塔高h，塔底C。\\(\\overline{BC}=h/\\tan(60^\\circ)=h/\\sqrt{3}\\)。\\(\\overline{AC}=h/\\tan(30^\\circ)=h\\sqrt{3}\\)。\\(\\overline{AC}=\\overline{AB}+\\overline{BC} \\implies h\\sqrt{3}=30+h/\\sqrt{3} \\implies 3h=30\\sqrt{3}+h \\implies 2h=30\\sqrt{3} \\implies h=15\\sqrt{3}\\)。" },
+                { q: "梯形ABCD，\\(\\overline{AD}//\\overline{BC}\\)，對角線交於P，\\(\\overline{AD}=4, \\overline{BC}=6\\)，\\(\\triangle APD\\)面積為8，求梯形面積。", o: ["45", "50", "60"], a: "B", svg: '<svg viewBox="0 0 120 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="30,20 90,20 110,80 10,80" fill="#e0f2fe" stroke="black"/><text x="28" y="18" font-size="5">A</text><text x="92" y="18" font-size="5">D</text><text x="8" y="85" font-size="5">B</text><text x="112" y="85" font-size="5">C</text><line x1="30" y1="20" x2="110" y2="80" stroke="gray"/><line x1="90" y1="20" x2="10" y2="80" stroke="gray"/><circle cx="60" cy="44" r="1.5" fill="black"/><text x="62" y="42" font-size="5">P</text><text x="55" y="15" font-size="5">4</text><text x="55" y="88" font-size="5">6</text><text x="55" y="30" font-size="5">A=8</text></svg>', ex: "\\(\\triangle APD \\sim \\triangle CPB\\)，邊長比\\(4:6=2:3\\)。面積比\\(2^2:3^2=4:9\\)。\\(\\triangle CPB\\)面積=\\(8 \\times (\\frac{9}{4})=18\\)。\\(\\triangle APB\\)面積=\\(\\triangle DPC\\)面積=\\(8 \\times (\\frac{3}{2})=12\\)。總面積=8+18+12+12=50。" },
+                { q: "(P.79 自我評量4) \\(\\triangle ABC\\)為邊長12的正三角形，層層取中點，求所有線段長總和。", o: ["63", "72", "54"], a: "A", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,87 90,87 50,13" stroke="black" fill="none"/><polygon points="70,50 50,87 30,50" stroke="black" fill="none"/><polygon points="40,68.5 60,68.5 50,50" stroke="black" fill="none"/><text x="65" y="88" font-size="5">12</text></svg>', ex: "大周長36，中周長18，小周長9。總和=36+18+9=63。" },
+                { q: "(P.79 自我評量6) 直角\\(\\triangle ABC\\)中，\\(\\angle A=30^\\circ\\)，面積為 \\(8\\sqrt{3}\\)，求周長。", o: ["\\(12+4\\sqrt{3}\\)", "24", "12"], a: "A", svg: '<svg viewBox="0 0 100 100" class="w-full h-auto max-w-xs mx-auto"><polygon points="10,90 90,90 90,10" fill="#f3e8ff" stroke="#a855f7"/><text x="92" y="8" font-size="5">B</text><text x="92" y="95" font-size="5">C(90°)</text><text x="5" y="95" font-size="5">A(30°)</text><text x="40" y="50" font-size="6">A=8√3</text></svg>', ex: "設30度對的邊\\(\\overline{BC}=x\\)，則\\(\\overline{AB}=x\\sqrt{3}\\)。面積 \\(\\frac{1}{2}x \\cdot x\\sqrt{3}=8\\sqrt{3} \\implies x=4\\)。三邊4, \\(4\\sqrt{3}\\), 8。周長=\\(12+4\\sqrt{3}\\)。" },
+                { q: "(P.81 一題多解) 直角\\(\\triangle ABC\\)中，\\(\\overline{AB}=12, \\overline{BC}=20, \\overline{AC}=16\\)，作\\(\\overline{BC}\\)中垂線L，求\\(\\overline{CD}\\)。", o: ["12.5", "10", "15"], a: "A", svg: '<svg viewBox="0 0 180 140" class="w-full h-auto max-w-sm mx-auto"><polygon points="10,10 10,130 170,10" fill="#fef9c3" stroke="black"/><text x="5" y="8" font-size="6">A</text><text x="5" y="135" font-size="6">B</text><text x="172" y="8" font-size="6">C</text><text x="0" y="70" font-size="6">12</text><text x="80" y="5" font-size="6">16</text><circle cx="90" cy="70" r="2" fill="red"/><text x="92" y="68" font-size="5">M</text><line x1="66" y1="10" x2="114" y2="92" stroke="red" stroke-dasharray="2"/><text x="61" y="5" font-size="6">D</text><path d="M 90 70 L 86 73 L 87 68" stroke="red" fill="none"/></svg>', ex: "設 \\(\\overline{CD}=x\\)。\\(\\overline{BD}=\\overline{CD}=x\\)。\\(\\overline{AD}=16-x\\)。\\(x^2=12^2+(16-x)^2 \\implies 32x=400 \\implies x=12.5\\)。" }
+            ]
+        }
+    };
+    
+    // --- Core Logic ---
+    const setupTabs = (containerOrSelector, btnClass, contentClass) => {
+        const container = (typeof containerOrSelector === 'string')
+            ? document.querySelector(containerOrSelector)
+            : containerOrSelector || document;
+
+        const tabs = container.querySelectorAll(btnClass);
+        const contents = container.querySelectorAll(contentClass);
+        if (!tabs.length) return;
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const targetId = tab.dataset.tab || tab.dataset.group;
+                contents.forEach(content => {
+                    content.classList.toggle('hidden', content.id !== targetId);
+                });
+
+                if (btnClass === '.tab-btn') {
+                     const titleDisplay = document.getElementById('chapter-title-display');
+                     if(titleDisplay) titleDisplay.textContent = tab.dataset.title || '';
+                }
+            });
+        });
+    };
+
+    const createQuizHTML = (questions) => {
+        if (!questions || questions.length === 0) return '';
+        let html = questions.map((item, index) => `
+            <div class="quiz-item" data-answer="${item.a}" data-explanation="${item.ex}" style="${index > 0 ? 'display: none;' : ''}">
+                <p class="font-medium text-lg mb-3">${index + 1}. ${item.q}</p>
+                ${item.svg ? `<div class="my-4 flex justify-center">${item.svg}</div>` : ''}
+                <div class="quiz-options">
+                    ${Object.entries(item.o).map(([key, value]) => `<button class="option-btn" data-value="${String.fromCharCode(65 + parseInt(key))}">${value}</button>`).join('')}
+                </div>
+                <div class="feedback-box mt-4"></div>
+                <div class="mt-6">
+                    <button class="toggle-canvas-btn bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-2 px-4 rounded-lg w-full text-left flex items-center">
+                        <span class="mr-2">📝</span>
+                        <span class="btn-text">開啟手寫計算區</span>
+                    </button>
+                    <div class="canvas-wrapper hidden mt-4">
+                        <div class="flex items-center justify-end space-x-2 mb-2">
+                            <span class="text-sm">顏色:</span>
+                            <input type="color" class="canvas-color-picker w-7 h-7 p-0 border-none rounded cursor-pointer" value="#ff0000">
+                            <button class="canvas-clear-btn text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">清除</button>
+                        </div>
+                        <canvas class="drawing-canvas border border-gray-300 bg-white rounded-lg w-full"></canvas>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        if (questions.length > 1) {
+            html += `
+                <div class="flex items-center justify-between mt-6">
+                    <button class="quiz-prev-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1 px-4 rounded-lg disabled:opacity-50">上一題</button>
+                    <div class="quiz-counter text-slate-600"></div>
+                    <button class="quiz-next-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1 px-4 rounded-lg">下一題</button>
+                </div>`;
+        }
+        return html;
+    };
+
+    const setupCanvas = (container) => {
+        const canvas = container.querySelector('canvas.drawing-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const clearBtn = container.querySelector('.canvas-clear-btn');
+        const colorPicker = container.querySelector('.canvas-color-picker');
+
+        const setCanvasSize = () => {
+             // A short delay helps ensure the parent element has its final dimensions during resize events.
+            setTimeout(() => {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const newHeight = window.innerWidth < 640 ? 150 : 200;
+                
+                canvas.width = rect.width;
+                canvas.height = newHeight; 
+                canvas.style.height = `${newHeight}px`;
+
+                // Context settings can be reset when canvas dimensions change. Re-apply them.
+                if (ctx) {
+                    ctx.strokeStyle = colorPicker.value;
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                }
+            }, 50); // 50ms delay
+        };
+        setCanvasSize();
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const [currentX, currentY] = getMousePos(e);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(currentX, currentY);
+            ctx.stroke();
+            [lastX, lastY] = [currentX, currentY];
+        }
+        
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches && e.touches.length > 0 ? e.touches[0] : e;
+            return [touch.clientX - rect.left, touch.clientY - rect.top];
+        }
+        
+        const startDrawing = (e) => {
+             if (e.touches && e.touches.length > 1) return;
+             isDrawing = true;
+             [lastX, lastY] = getMousePos(e);
+        };
+        
+        const stopDrawing = () => isDrawing = false;
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('touchstart', startDrawing, { passive: false });
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        canvas.addEventListener('touchend', stopDrawing);
+        canvas.addEventListener('touchcancel', stopDrawing);
+
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        colorPicker.addEventListener('input', (e) => {
+            ctx.strokeStyle = e.target.value;
+        });
+        
+        // Use a debounce function for resize to avoid excessive calls
+        let resizeTimeout;
+        const debouncedResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(setCanvasSize, 150);
+        };
+        window.addEventListener('resize', debouncedResize);
+    };
+
+    const setupQuizContainer = (container) => {
+        const questions = Array.from(container.querySelectorAll('.quiz-item'));
+        if (!questions.length) return;
+
+        let currentIndex = 0;
+        const prevBtn = container.querySelector('.quiz-prev-btn');
+        const nextBtn = container.querySelector('.quiz-next-btn');
+        const counterEl = container.querySelector('.quiz-counter');
+
+        const updateNav = () => {
+            if (counterEl) counterEl.textContent = `第 ${currentIndex + 1} / ${questions.length} 題`;
+            if (prevBtn) prevBtn.disabled = currentIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentIndex === questions.length - 1;
+        };
+
+        const showQuestion = (index) => {
+            questions.forEach((q, i) => q.style.display = i === index ? 'block' : 'none');
+            currentIndex = index;
+            updateNav();
+        };
+
+        prevBtn?.addEventListener('click', () => showQuestion(currentIndex - 1));
+        nextBtn?.addEventListener('click', () => showQuestion(currentIndex + 1));
+
+        questions.forEach(item => {
+            const toggleBtn = item.querySelector('.toggle-canvas-btn');
+            const canvasWrapper = item.querySelector('.canvas-wrapper');
+            let canvasInitialized = false;
+
+            if (toggleBtn && canvasWrapper) {
+                toggleBtn.addEventListener('click', () => {
+                    const isHidden = canvasWrapper.classList.toggle('hidden');
+                    const buttonText = toggleBtn.querySelector('.btn-text');
+
+                    if (isHidden) {
+                        buttonText.textContent = '開啟手寫計算區';
+                    } else {
+                        buttonText.textContent = '關閉手寫計算區';
+                        if (!canvasInitialized) {
+                            setupCanvas(canvasWrapper);
+                            canvasInitialized = true;
+                        }
+                    }
+                });
+            }
+            
+            item.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const isCorrect = btn.dataset.value === item.dataset.answer;
+                    item.querySelectorAll('.option-btn').forEach(b => {
+                        b.disabled = true;
+                        if (b.dataset.value === item.dataset.answer) b.classList.add('correct');
+                    });
+                    if (!isCorrect) btn.classList.add('incorrect');
+
+                    const feedbackEl = item.querySelector('.feedback-box');
+                    const explanation = item.dataset.explanation;
+                    feedbackEl.innerHTML = `
+                        <div class="p-3 rounded text-base ${isCorrect ? 'bg-green-100 border-green-200' : 'bg-red-100 border-red-200'}">
+                            <span class="text-2xl mr-2">${isCorrect ? '✅' : '❌'}</span>
+                            ${isCorrect ? '答對了！' : '答錯了。'}
+                            <p class="mt-2 text-slate-700">${explanation}</p>
+                        </div>
+                    `;
+                    renderKatex();
+                });
+            });
+        });
+        updateNav();
+    };
+    
+    // --- Populate and Initialize All Quizzes ---
+    for (const lessonKey in lessonData) {
+        for (const levelKey in lessonData[lessonKey]) {
+            const containerId = `${lessonKey}-${levelKey}`;
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = createQuizHTML(lessonData[lessonKey][levelKey]);
+                setupQuizContainer(container);
+            }
+        }
+    }
+
+    renderKatex();
+
+
+    // --- Initialize Tabs ---
+    const chapterTitleDisplay = document.getElementById('chapter-title-display');
+    const mainTabs = document.querySelectorAll('.tab-btn');
+    const mainContents = document.querySelectorAll('.tab-content');
+    
+    const updateChapterTitle = (tab) => {
+        if (chapterTitleDisplay && tab) {
+            chapterTitleDisplay.textContent = tab.dataset.title || '';
+        }
+    };
+    
+    mainTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            mainTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            mainContents.forEach(c => c.classList.add('hidden'));
+            document.getElementById(tab.dataset.tab).classList.remove('hidden');
+            updateChapterTitle(tab);
+        });
+    });
+
+    document.querySelectorAll('.activity-container').forEach(container => {
+        setupTabs(container, '.group-tab-btn', '.group-tab-content');
+    });
+
+    // --- Setup Quick Links ---
+    document.querySelectorAll('.quick-link-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTabId = btn.dataset.targetTab;
+            const targetTab = document.querySelector(`.tab-btn[data-tab='${targetTabId}']`);
+            if (targetTab) {
+                targetTab.click();
+                const mainContent = document.querySelector('main');
+                mainContent.scrollIntoView({ behavior: 'smooth'});
+            }
+        });
+    });
+    
+    // Set initial title
+    updateChapterTitle(document.querySelector('.tab-btn.active'));
+
+
+    // --- Interactive Elements ---
+    const sun = document.getElementById('sun');
+    if (sun) {
+        let dragging = false;
+        const thalesSim = document.getElementById('thales-sim');
+        
+        const startDrag = () => { dragging = true; };
+        const endDrag = () => { dragging = false; };
+        
+        sun.addEventListener('mousedown', startDrag);
+        document.addEventListener('mouseup', endDrag);
+        sun.addEventListener('touchstart', startDrag, { passive: true });
+        document.addEventListener('touchend', endDrag);
+        
+        const moveHandler = (e) => {
+            if (!dragging) return;
+            if (e.type === 'touchmove') e.preventDefault();
+            const touch = e.touches ? e.touches[0] : e;
+            const rect = thalesSim.getBoundingClientRect();
+            let x = touch.clientX - rect.left;
+            x = Math.max(sun.offsetWidth / 2, Math.min(rect.width - sun.offsetWidth / 2, x));
+            sun.style.left = `${x - sun.offsetWidth / 2}px`;
+            
+            const angle = (x / rect.width - 0.5) * 90;
+            const tanValue = Math.tan(angle * Math.PI / 180);
+            
+            const pyramidHeight = 80;
+            const stickHeight = 16;
+            
+            const pyramidShadowLength = pyramidHeight * tanValue;
+            const stickShadowLength = stickHeight * tanValue;
+            
+            document.getElementById('pyramid-shadow').style.transform = `skewX(${-angle}deg)`;
+            document.getElementById('stick-shadow').style.transform = `scaleY(${Math.abs(tanValue)})`;
+
+            document.getElementById('pyramid-info').textContent = `高: ${pyramidHeight}m, 影長: ${Math.abs(pyramidShadowLength).toFixed(1)}m`;
+            document.getElementById('stick-info').textContent = `高: ${stickHeight}m, 影長: ${Math.abs(stickShadowLength).toFixed(1)}m`;
+            
+            const conclusion = document.getElementById('thales-conclusion');
+            if (Math.abs(Math.abs(stickShadowLength) - stickHeight) < 1) {
+                conclusion.textContent = '發現了！木棍影長=高度時，金字塔影長也=高度！';
+            } else {
+                conclusion.textContent = '';
+            }
+        };
+        thalesSim.addEventListener('mousemove', moveHandler);
+        thalesSim.addEventListener('touchmove', moveHandler, { passive: false });
+    }
+
+    const scaleSlider = document.getElementById('scale-slider');
+    if (scaleSlider) {
+        const svg = document.getElementById('scaling-svg');
+        scaleSlider.addEventListener('input', (e) => {
+            const scale = e.target.value;
+            svg.style.transform = `scale(${scale})`;
+            const sideRatio = parseFloat(scale).toFixed(1);
+            const areaRatio = (scale * scale).toFixed(2);
+            document.getElementById('side-ratio').textContent = `${sideRatio} : 1`;
+            document.getElementById('perimeter-ratio').textContent = `${sideRatio} : 1`;
+            document.getElementById('area-ratio').textContent = `${areaRatio} : 1`;
+        });
+    }
+
+    const puzzleContainer = document.getElementById('draggable-container');
+    if(puzzleContainer) {
+        const pieces = ['1', '1', '√2', '1', '√3', '2'];
+        const dropZones = document.querySelectorAll('.drop-zone');
+        let draggedItem = null;
+
+        pieces.sort(() => Math.random() - 0.5).forEach(p => {
+            const el = document.createElement('div');
+            el.className = 'draggable p-2 border rounded bg-yellow-200 select-none';
+            el.textContent = p;
+            el.draggable = true;
+            puzzleContainer.appendChild(el);
+            el.addEventListener('dragstart', (e) => {
+                draggedItem = e.target;
+                setTimeout(() => { if(draggedItem) draggedItem.style.display = 'none'; }, 0);
+            });
+            el.addEventListener('dragend', () => {
+                setTimeout(() => {
+                    if(draggedItem) {
+                        draggedItem.style.display = 'block';
+                        draggedItem = null;
+                    }
+                }, 0);
+            });
+        });
+        
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', e => { e.preventDefault(); zone.classList.add('over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('over');
+                if (draggedItem) {
+                    zone.textContent = draggedItem.textContent;
+                    if (zone.dataset.answer === draggedItem.textContent) {
+                        zone.style.backgroundColor = '#a7f3d0';
+                        zone.style.borderColor = '#10b981';
+                    } else {
+                        zone.style.backgroundColor = '#fecaca';
+                         zone.style.borderColor = '#ef4444';
+                    }
+                    draggedItem.remove();
+                    draggedItem = null;
+                    checkPuzzleCompletion();
+                }
+            });
+        });
+
+        const checkPuzzleCompletion = () => {
+             if(puzzleContainer.children.length === 0) {
+                 const allCorrect = [...dropZones].every(z => z.textContent === z.dataset.answer);
+                 const feedback = document.getElementById('puzzle-feedback');
+                 feedback.textContent = allCorrect ? '太棒了，完全正確！' : '有些地方不對喔，再試試看！';
+                 feedback.className = `text-center mt-2 h-6 font-bold ${allCorrect ? 'text-green-600' : 'text-red-600'}`;
+             }
+        }
+    }
+    
+    const rampSlider = document.getElementById('ramp-slider');
+    if(rampSlider) {
+        const rampPolygon = document.getElementById('ramp-polygon');
+        const updateRamp = () => {
+            const hLength = rampSlider.value;
+            const height = 20;
+            const width = 100;
+            const startX = Math.max(0, width - (hLength / 400 * width));
+            rampPolygon.setAttribute('points', `${startX},${height} ${width},${height} ${width},0`);
+            const realHeight = 20;
+            const slope = (realHeight / hLength).toFixed(3);
+            document.getElementById('ramp-length').textContent = hLength;
+            document.getElementById('ramp-slope').textContent = slope;
+            const statusEl = document.getElementById('ramp-status');
+            if (slope <= 1/12) {
+                statusEl.textContent = '合格';
+                statusEl.className = 'ml-2 font-bold p-1 rounded bg-green-200 text-green-800';
+            } else {
+                statusEl.textContent = '太陡！不合格';
+                statusEl.className = 'ml-2 font-bold p-1 rounded bg-red-200 text-red-800';
+            }
+        };
+        rampSlider.addEventListener('input', updateRamp);
+        updateRamp();
+    }
+    
+    const toolbox = document.querySelector('.toolbox-item');
+    if (toolbox) {
+        const feedback = document.getElementById('toolbox-feedback');
+        const strategies = {
+            'toolbox-ruler': '方法：測量旗杆和自己的影長，再用你的身高，列出比例式求解！<br>\\(\\frac{旗杆高}{旗杆影長} = \\frac{你的身高}{你的影長}\\)',
+            'toolbox-protractor': '方法：測量地面到旗杆頂的仰角(θ)，再測量你到旗杆的水平距離(d)，用 \\(\\tan(\\theta) = \\frac{高度}{d}\\) 來計算！',
+            'toolbox-special': '方法：如果幸運地發現仰角剛好是 30°, 45° 或 60°，就可以用特殊邊長比快速算出高度！'
+        };
+        document.querySelectorAll('.toolbox-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                feedback.innerHTML = strategies[e.currentTarget.id];
+                renderKatex();
+            });
+        });
+    }
+
+});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
